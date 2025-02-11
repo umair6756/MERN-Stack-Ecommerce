@@ -1,0 +1,133 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Hero Section */
+
+  
+
+
+  .contact-heading{
+    text-align: center;
+    margin-top: 3rem;
+  }
+  
+  /* Contact Section */
+  .contact-section {
+    padding: 50px 0px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .contact-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    width: 100%;
+    background-color: #f0f0f0;
+    gap: 30px;
+    padding: 5rem 3rem;
+
+  }
+  
+  /* Left: Image */
+  .contact-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* border-radius: 10px; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
+  }
+  
+  .contact-image {
+    width: 45%;
+    height: 550px;
+    display: block;
+    margin-top: 3rem;
+  }
+  
+  /* Right: Form */
+  .contact-form {
+    width: 60%;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .contact-form h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #C19A6B;
+  }
+  
+  .contact-form label {
+    font-size: 1em;
+    color: #555;
+    
+    margin-bottom: 5px;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+
+
+  .contact-form button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .contact-form button:hover {
+    background-color: #0056b3;
+  }
+
+  .location iframe{
+  width: 100%;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .contact-container {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .contact-image {
+      display: none;
+    }
+  
+    .contact-form {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .hero-overlay h1 {
+      font-size: 2em;
+    }
+  
+    .hero-overlay .home-link {
+      padding: 8px 15px;
+      font-size: 0.9em;
+    }
+  }
+  

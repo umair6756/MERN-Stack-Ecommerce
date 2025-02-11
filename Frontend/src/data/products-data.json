@@ -1,0 +1,118 @@
+ [
+    {
+      "id": 1,
+      "name": "Product 1",
+      "image": "/images/t-shirts/cloth1.png",
+      "src": "images/t-shirts/cloth1.png",
+      "price": 500,
+      "discountPrice": 350,
+      "category": "Clothing",
+      "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+      "sizes": ["S", "M", "L", "XL"]
+    },
+    {
+      "id": 2,
+      "name": "Product 2",
+      "image": "/images/t-shirts/cloth3.png",
+      "price": 800,
+      "discountPrice": 600,
+      "onSale":true,
+      "sale":23,
+      "category": "Clothing",
+      "stock":20,
+      "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+      "sizes": ["S", "M", "L", "XL"]
+
+    },
+    {
+      "id": 3,
+      "name": "Product 3",
+      "image": "/images/glases/glases1.png",
+      "price": 1200,
+      "discountPrice": 900,
+      "category": "Glases",
+      "colors": ["#33C1FF", "#81C784", "#FFEB3B"],
+      "sizes": ["M", "L", "XL"]
+    },
+    {
+      "id": 4,
+      "name": "Product 4",
+      "image": "/images/bags/bag1.png",
+      "price": 1500,
+      "discountPrice": 1200,
+      "category": "Bags",
+      "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+      "sizes": ["S", "M", "L", "XL"]
+    },
+    {
+        "id": 5,
+        "name": "Product 5",
+        "image": "/images/bags/bag2.png",
+        "price": 1500,
+        "discountPrice": 1200,
+        "category": "Bags",
+        "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+        "sizes": ["S", "M", "L", "XL"]
+    },
+    {
+        "id": 6,
+        "name": "Product 6",
+        "image": "/images/watches/watch1.jpg",
+        "price": 1500,
+        "discountPrice": 1200,
+        "onSale":true,
+        "sale":10, 
+        "category": "Watches",
+        "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+        "sizes": ["S", "M", "L", "XL"]
+    },
+    {
+      "id": 7,
+      "name": "Product 7",
+      "image": "/images/watches/watch2.jpg",
+      "price": 1500,
+      "discountPrice": 1200,
+      "onSale":true,
+      "sale":12, 
+      "category": "Watches",
+      "colors": ["#FF5733","#81C784", "#FFEB3B"],
+      "sizes": ["S","L", "XL"]
+    },
+    {
+      "id": 8,
+      "name": "Product 8",
+      "image": "/images/t-shirts/cloth2.png",
+      "price": 1500,
+      "discountPrice": 1200,
+      "onSale":true,
+      "sale":50, 
+      "category": "Clothing",
+      "colors": ["#FF5733", "#33C1FF", "#81C784"],
+      "sizes": ["S", "M", "L", "XL"]
+    },
+    {
+      "id": 9,
+      "name": "Product 9",
+      "image": "/images/t-shirts/cloth4.png",
+      "price": 1500,
+      "discountPrice": 1200,
+      "onSale":true,
+      "sale":15, 
+      "category": "Clothing",
+      "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+      "sizes": ["S", "M", "L"]
+    },
+    {
+      "id": 10,
+      "name": "Product 10",
+      "image": "/images/t-shirts/cloth5.png",
+      "price": 1500,
+      "discountPrice": 1200,
+      "onSale":true,
+      "sale":30, 
+      "category": "Clothing",
+      "colors": ["#FF5733", "#33C1FF", "#81C784", "#FFEB3B"],
+      "sizes": ["S", "M", "L", "XL"]
+    } 
+  ]
+  

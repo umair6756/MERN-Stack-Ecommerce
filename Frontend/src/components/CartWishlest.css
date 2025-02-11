@@ -1,0 +1,353 @@
+
+/* =============   Add to cart   =================== */
+
+.title{
+    margin-bottom: 5vh;
+}
+.Add-To-Cart{
+   
+    max-width: 950px;
+    width: 90%;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;
+    border: transparent;
+    margin: 5rem 3rem;
+}
+@media(max-width:767px){
+    .Add-To-Cart{
+        margin: 3vh auto;
+    }
+}
+.cart{
+    background-color: #fff;
+    padding: 4vh 5vh;
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+@media(max-width:767px){
+    .cart{
+        padding: 4vh;
+        border-bottom-left-radius: unset;
+        border-top-right-radius: 1rem;
+    }
+}
+.summary{
+    background-color: #ddd;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 4vh;
+    color: rgb(65, 65, 65);
+}
+@media(max-width:767px){
+    .summary{
+    border-top-right-radius: unset;
+    border-bottom-left-radius: 1rem;
+    }
+}
+@media(max-width:500px) {
+    .img-fluid{
+        display: none !important;
+    }
+
+    .col-2{
+        display: none;
+    }
+}
+.summary .col-2{
+    padding: 0;
+}
+.summary .col-10
+{
+    padding: 0;
+}.row{
+    margin: 0;
+}
+.title b{
+    font-size: 1.5rem;
+}
+.add-to-cart-main{
+    margin: 0;
+    padding: 4vh 0;
+    width: 100%;
+}
+.col-2, .col{
+    padding: 0 1vh;
+}
+.col .quantity-btn{
+    border: none;
+    outline: none;
+    background: transparent;
+}
+a{
+    padding: 0 1vh;
+}
+.close{
+    margin-left: auto;
+    font-size: 0.7rem;
+    border: none;
+    background: transparent;
+}
+.img-fluid{
+    width: 4.5rem;
+    height: 4.5rem;
+    object-fit: fill;
+    
+}
+.back-to-shop{
+    margin-top: 4.5rem;
+}
+h5{
+    margin-top: 4vh;
+}
+hr{
+    margin-top: 1.25rem;
+}
+form{
+    padding: 2vh 0;
+}
+.delivery-select{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1.5vh 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+.cuppon-input{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+.cuppon-input:focus::-webkit-input-placeholder
+{
+      color:transparent;
+}
+.checkBtn{
+    background-color: #C19A6B;
+    border-color: #000;
+    color: #222;
+    width: 100%;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 4vh;
+    padding: 1vh;
+    border-radius: 0;
+    display: block;
+    text-align: center;
+    transition: .6s;
+}
+.checkBtn:focus{
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    -webkit-box-shadow: none;
+    -webkit-user-select: none;
+    transition: none; 
+}
+.checkBtn:hover{
+    
+    background-color: transparent;
+}
+a{
+    color: black; 
+    text-decoration: none;
+}
+
+ #code{
+    background-image: linear-gradient(to left, rgba(255, 255, 255, 0.253) , rgba(255, 255, 255, 0.185)), url("https://img.icons8.com/small/16/000000/long-arrow-right.png");
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: center;
+}
+
+
+
+
+
+
+
+
+/* ====================   Add to Wishlest   ============= */
+
+
+.cart-wrap {
+	padding: 40px 0;
+	font-family: 'Open Sans', sans-serif;
+}
+.main-heading {
+	font-size: 19px;
+	margin-bottom: 20px;
+}
+.table-wishlist table {
+    width: 100%;
+}
+.table-wishlist thead {
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 5px;
+}
+.table-wishlist thead tr th {
+    padding: 8px 0 18px;
+    color: #484848;
+    font-size: 15px;
+    font-weight: 400;
+}
+.table-wishlist tr td {
+    padding: 25px 0;
+    vertical-align: middle;
+}
+.table-wishlist tr td .img-product {
+    width: 72px;
+    float: left;
+    margin-left: 8px;
+    margin-right: 31px;
+    line-height: 63px;
+}
+.table-wishlist tr td .img-product img {
+	width: 100%;
+}
+.table-wishlist tr td .name-product {
+    font-size: 15px;
+    color: #484848;
+    padding-top: 8px;
+    line-height: 24px;
+    width: 50%;
+}
+.table-wishlist tr td.price {
+    font-weight: 600;
+}
+.table-wishlist tr td .quanlity {
+    position: relative;
+}
+
+.total {
+	font-size: 24px;
+	font-weight: 600;
+	color: #8660e9;
+}
+.display-flex {
+	display: flex;
+}
+.align-center {
+	align-items: center;
+}
+.round-black-btn {
+	border-radius: 25px;
+    background: #212529;
+    color: #fff;
+    padding: 5px 20px;
+    display: inline-block;
+    border: solid 2px #212529; 
+    transition: all 0.5s ease-in-out 0s;
+    cursor: pointer;
+    font-size: 14px;
+}
+.round-black-btn:hover,
+.round-black-btn:focus {
+	background: transparent;
+	color: #212529;
+	text-decoration: none;
+}
+.mb-10 {
+    margin-bottom: 10px !important;
+}
+.mt-30 {
+    margin-top: 30px !important;
+}
+.d-block {
+    display: block;
+}
+.custom-form label {
+    font-size: 14px;
+    line-height: 14px;
+}
+.pretty.p-default {
+    margin-bottom: 15px;
+}
+.pretty input:checked~.state.p-primary-o label:before, 
+.pretty.p-toggle .state.p-primary-o label:before {
+    border-color: #8660e9;
+}
+.pretty.p-default:not(.p-fill) input:checked~.state.p-primary-o label:after {
+    background-color: #8660e9 !important;
+}
+.main-heading.border-b {
+    border-bottom: solid 1px #ededed;
+    padding-bottom: 15px;
+    margin-bottom: 20px !important;
+}
+.custom-form .pretty .state label {
+    padding-left: 6px;
+}
+.custom-form .pretty .state label:before {
+    top: 1px;
+}
+.custom-form .pretty .state label:after {
+    top: 1px;
+}
+.custom-form .form-control {
+    font-size: 14px;
+    height: 38px;
+}
+.custom-form .form-control:focus {
+    box-shadow: none;
+}
+.custom-form textarea.form-control {
+    height: auto;
+}
+.mt-40 {
+    margin-top: 40px !important; 
+}
+.in-stock-box {
+	background: #ff0000;
+	font-size: 12px;
+	text-align: center;
+	border-radius: 25px;
+	padding: 4px 15px;
+	display: inline-block;  
+    color: #fff;
+}
+.trash-icon {
+    font-size: 20px;
+    color: #212529;
+}
+
+
+
+
+@media (max-width:767px) {
+    .in-stock-box{
+        display: none !important;
+        width: 0 !important;
+    }
+
+    .stock-th{
+        width: 0 !important;
+        display: none !important;
+    }
+
+    .productName-th{
+        width: 30%;
+    }
+
+    .inStock-td{
+        width: 0 !important;
+        display: none !important;
+    }
+
+    .productName-td{
+        width: 30%;
+    }
+
+    .img-product{
+        display: none !important;
+        width: 0 !important;
+    }
+
+    .addToCart-td{
+        width: 30% !important;
+    }
+}

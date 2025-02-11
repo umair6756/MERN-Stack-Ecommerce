@@ -1,0 +1,32 @@
+[
+    {
+      "image": "https://example.com/images/user1.jpg",
+      "name": "Alice Johnson",
+      "comment": "Great product, highly recommend it!",
+      "stars": 5
+    },
+    {
+      "image": "https://example.com/images/user2.jpg",
+      "name": "Bob Smith",
+      "comment": "Good value for the price, but shipping was slow.",
+      "stars": 4
+    },
+    {
+      "image": "https://example.com/images/user3.jpg",
+      "name": "Catherine Lee",
+      "comment": "Not satisfied with the quality. It broke after a week.",
+      "stars": 2
+    },
+    {
+      "image": "/images/t-shirts/cloth3.png",
+      "name": "David Brown",
+      "comment": "Excellent customer service and a great experience overall.",
+      "stars": 2
+    },
+    {
+      "image": "",
+      "name": "Emma Wilson",
+      "comment": "The product is okay, but it didn’t meet my expectations.",
+      "stars": 3
+    }
+  ]
