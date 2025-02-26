@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./Products.css";
 // import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
 import image1 from '../banners-image/hero/blog-hero.jpg'
@@ -8,14 +8,50 @@ import { faCalendar, faComment, faUser } from "@fortawesome/free-solid-svg-icons
 
 import { HeroSection } from "./Buttons";
 import { useParams } from "react-router-dom";
-import blogData from '../data/blogs-data.json';
+import moment from "moment";
 
 
 const BlogDetail = () => {
 
-  const { id } = useParams();
-  const blog = blogData.find(b => b.id === parseInt(id));
 
+   const [blogs, setblogs] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
+
+  const { id } = useParams();
+  
+
+
+
+  useEffect(() => {
+      // Fetch product data from the backend
+      fetch(`http://localhost:5000/blog/${id}`) // Change the URL based on your API endpoint
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Error fetching blogs');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setblogs(data);  // Set the fetched products
+          setLoading(false);   // Stop loading
+        })
+        .catch((err) => {
+          setError(err.message);  // Handle error
+          setLoading(false);
+        });
+    }, [id]); // Empty dependency array ensures this runs only once (on component mount)
+  
+    // If loading, display a loading message
+    if (loading) {
+      return <div>Loading products...</div>;
+    }
+  
+    // If error occurs, display an error message
+    if (error) {
+      return <div>Error: {error}</div>;
+    }
 
   return (
 
@@ -27,57 +63,26 @@ const BlogDetail = () => {
         {/* Blog Content */}
         <div className="blog-content ">
           {/* Blog Image */}
-          <img src={blog.image} alt="Blog" className="blogDetail-image" />
+          <img src={blogs.heroImage} alt="Blog" className="blogDetail-image" />
 
-          <h1>{blog.content1Title}</h1>
+          <h1>{blogs.title}</h1>
 
           <div className="authorInform d-flex flex-row gap-4 my-4">
-            <p><FontAwesomeIcon icon={faUser} style={{ color: '#C19A6B' }} /> <span>{blog.author}</span> </p>
-            <p><FontAwesomeIcon icon={faCalendar} className="autohorsIcon" /> <span>{blog.date}</span> </p>
+            <p><FontAwesomeIcon icon={faUser} style={{ color: '#C19A6B' }} /> <span>{blogs.author}</span> </p>
+            <p><FontAwesomeIcon icon={faCalendar} className="autohorsIcon" /> <span>{moment(blogs.date).format("DD MMMM YYYY")}</span> </p>
             <p><FontAwesomeIcon icon={faComment} className="autohorsIcon" /> <span>12-2-2023</span> </p>
 
 
           </div>
 
+          <div>
+          <div dangerouslySetInnerHTML={{ __html: blogs.content }} />
+          </div>
+
           {/* Paragraphs */}
-          <p>{blog.blogContent1}</p>
+          {/* <p>{blog.blogContent1}</p>
           <p>{blog.blogContent2}</p>
 
-          {/* Quote Section */}
-          <div className="quote-section">
-            <blockquote>
-              {blog.quote}
-            </blockquote>
-            <span>{blog.quoteAuthor}</span>
-          </div>
-
-          {/* Small Paragraph */}
-          <p>{blog.blogContent3}</p>
-
-          {/* Two Images in Row */}
-          <div className="image-row my-4">
-            <img src={blog.image} alt="Image 1" />
-            <img src={blog.image} alt="Image 2" className="image2" />
-          </div>
-
-          {/* Heading and Paragraph */}
-          <h3>{blog.content5Title}</h3>
-          <p>{blog.blogContent5}</p>
-
-          {/* Image with Heading and Paragraph */}
-          <img src={blog.image} alt="Additional Content" className="additional-image" />
-          <h3>{blog.content6Title}</h3>
-          <p>{blog.blogContent6}</p>
-
-          {/* Important Points */}
-          <ul className="important-points">
-            <li><span>✔</span> {blog.points1}.</li>
-            <li><span>✔</span> {blog.points2}</li>
-            <li><span>✔</span> {blog.points3}</li>
-          </ul>
-
-          {/* Final Paragraph */}
-          <p>{blog.blogContent4}</p>
 
           {/* Border Bottom */}
           <div className="bottom-border"></div>

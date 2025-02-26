@@ -1,27 +1,65 @@
 import React from 'react'
 import './Products.css'
 import { Link } from 'react-router-dom';
-import { useContext, useEffect} from 'react';
+import { useContext, useEffect, useState} from 'react';
 import { CartContext } from './CartContext';
 import products from '../data/products-data.json'
-const firstSixProducts = products.slice(0,8);
+
 
 
 const Products = () => {
+
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const { addToCart, addToWish, useScrollAnimation } = useContext(CartContext);
 
     useScrollAnimation()
 
-    const {searchTerm} = useContext(CartContext)
+    // const {searchTerm} = useContext(CartContext)
 
-    const filteredProducts = firstSixProducts.filter((product) =>{
-        const matchesSearch = product.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+    // const filteredProducts = firstSixProducts.filter((product) =>{
+    //     const matchesSearch = product.name
+    //     .toLowerCase()
+    //     .includes(searchTerm.toLowerCase())
         
-        return matchesSearch
-    })
+    //     return matchesSearch
+    // })
+
+
+    
+      useEffect(() => {
+        // Fetch product data from the backend
+        fetch('http://localhost:5000/product') // Change the URL based on your API endpoint
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Error fetching products');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            setProducts(data);  // Set the fetched products
+            setLoading(false);   // Stop loading
+          })
+          .catch((err) => {
+            setError(err.message);  // Handle error
+            setLoading(false);
+          });
+      }, []); // Empty dependency array ensures this runs only once (on component mount)
+    
+      // If loading, display a loading message
+      if (loading) {
+        return <div>Loading products...</div>;
+      }
+    
+      // If error occurs, display an error message
+      if (error) {
+        return <div>Error: {error}</div>;
+      }
+
+    const firstSixProducts = products.slice(0,8);
+
 
 
     return (
@@ -33,14 +71,14 @@ const Products = () => {
 
             <div className="product-grid">
 
-                {filteredProducts.map(product => (
+                {firstSixProducts.map(product => (
                     <div key={product.id} className='product-card animationBox'>
                         <div className="product-image">
-                            <Link to={`/product/${product.id}`} className="image">
-                                <img src={product.image} alt={product.name}></img>
+                            <Link to={`/product/${product._id}`} className="image">
+                                <img src={product.productImage} alt={product.productName}></img>
                             </Link>
-                            {product.onSale && (
-                                <span className="product-discount-label">{product.sale}%</span>
+                            {product.productSale && (
+                                <span className="product-discount-label">{product.productSale}%</span>
                             )}
 
                             <ul className="product-links">
@@ -66,16 +104,16 @@ const Products = () => {
                         </div>
                         <div className="product-content">
                             <h3 className="title">
-                                <a href="#">{product.name}</a>
+                                <a href="#">{product.productName}</a>
                             </h3>
                             
                             <div className="price">
-                                {product.onSale ? (
+                                {product.productSale ? (
                                        <>
-                                      <span>{product.price - (product.price * product.sale / 100).toFixed(2)}</span>
-                                      <span className='mx-1' style={{color: "#888", textDecoration:"line-through", fontWeight: "400"}}>{product.price}</span>
+                                      <span>{product.productPrice - (product.productPrice * product.productSale / 100).toFixed(2)}</span>
+                                      <span className='mx-1' style={{color: "#888", textDecoration:"line-through", fontWeight: "400"}}>{product.productPrice}</span>
                                       </>
-                                ): product.price}
+                                ): product.productPrice}
 
                                 
                                 

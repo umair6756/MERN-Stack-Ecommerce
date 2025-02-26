@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from './Sidebar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRemove } from '@fortawesome/free-solid-svg-icons'
+import moment from 'moment'
 
 const Cupon = () => {
 
@@ -10,6 +11,84 @@ const Cupon = () => {
     const toggleForm = () => {
         setCuponForm(!cuponForm)
     }
+
+    const [cuponData, setCuponData] = useState({
+      code: "",
+      description: "",
+      discountValue: "",
+      expiryDate: "",
+      usageLimit: ""
+
+    })
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setCuponData({ ...cuponData, [name]: value });
+  
+    };
+
+    console.log(cuponData)
+
+    
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+  
+      try {
+          const response = await fetch("http://localhost:5000/cupon", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(cuponData), // Convert orderData to JSON
+          });
+  
+          const data = await response.json();
+          if (data.success) {
+              alert("Coupon Add successfully!");
+          } else {
+              alert(`Failed to add coupon: ${data.message}`);
+          }
+      } catch (error) {
+          console.error("Error Adding coupon:", error);
+          alert("Something went wrong.");
+      }
+  };
+   const [cupons, setCupons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+  useEffect(() =>{
+    fetch("http://localhost:5000/cupon")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Error fetching Cupons');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setCupons(data);  // Set the fetched products
+      setLoading(false);   // Stop loading
+    })
+    .catch((err) => {
+      setError(err.message);  // Handle error
+      setLoading(false);
+    });
+  
+  })
+
+
+if (loading) {
+  return <div>Loading products...</div>;
+}
+
+// If error occurs, display an error message
+if (error) {
+  return <div>Error: {error}</div>;
+}
+
+
+
+    
   return (
     <>
     <Sidebar/>
@@ -29,80 +108,29 @@ const Cupon = () => {
     </div>
         <div className="coupon-grid" id="couponGrid">
   {/* Static Coupons */}
+  {cupons.map((cupon) => (
   <div className="coupon-card">
-    <div className="coupon-header">SUMMER25</div>
+    <div className="coupon-header">{cupon.code}</div>
     <div className="coupon-body">
-      <div className="coupon-code">SUMMER25</div>
+      <div className="coupon-code-div">{cupon.code}</div>
       <div className="coupon-detail">
         <i className="fas fa-tag" />
-        <span className="coupon-discount">25% OFF</span>
+        <span className="coupon-discount">{cupon.discountValue}% OFF</span>
       </div>
       <div className="coupon-detail">
         <i className="far fa-calendar-alt" />
-        <span className="coupon-expiry">Expires: 2025-08-31</span>
+        <span className="coupon-expiry">Expires: {moment(cupon.expiryDate).format("DD MMMM YYYY")}</span>
       </div>
       <p className="coupon-description">
-        Enjoy a cool 25% off on all summer collections. Perfect for updating
-        your wardrobe!
+        {cupon.description}
       </p>
     </div>
-    <span className="status-badge status-active">active</span>
-  </div>
-  <div className="coupon-card">
-    <div className="coupon-header">WELCOME10</div>
-    <div className="coupon-body">
-      <div className="coupon-code">WELCOME10</div>
-      <div className="coupon-detail">
-        <i className="fas fa-tag" />
-        <span className="coupon-discount">10% OFF</span>
-      </div>
-      <div className="coupon-detail">
-        <i className="far fa-calendar-alt" />
-        <span className="coupon-expiry">Expires: 2025-12-31</span>
-      </div>
-      <p className="coupon-description">
-        New customer? Get 10% off on your first purchase. Start your journey
-        with us today!
-      </p>
-    </div>
-    <span className="status-badge status-active">active</span>
-  </div>
-  <div className="coupon-card">
-    <div className="coupon-header">FLASH50</div>
-    <div className="coupon-body">
-      <div className="coupon-code">FLASH50</div>
-      <div className="coupon-detail">
-        <i className="fas fa-tag" />
-        <span className="coupon-discount">50% OFF</span>
-      </div>
-      <div className="coupon-detail">
-        <i className="far fa-calendar-alt" />
-        <span className="coupon-expiry">Expires: 2025-02-14</span>
-      </div>
-      <p className="coupon-description">
-        Flash sale alert! Grab your favorites at half price. Limited time offer!
-      </p>
-    </div>
-    <span className="status-badge status-active">active</span>
-  </div>
-  <div className="coupon-card">
-    <div className="coupon-header">LOYALTY20</div>
-    <div className="coupon-body">
-      <div className="coupon-code">LOYALTY20</div>
-      <div className="coupon-detail">
-        <i className="fas fa-tag" />
-        <span className="coupon-discount">20% OFF</span>
-      </div>
-      <div className="coupon-detail">
-        <i className="far fa-calendar-alt" />
-        <span className="coupon-expiry">Expires: 2024-06-30</span>
-      </div>
-      <p className="coupon-description">
-        As a thank you to our loyal customers, enjoy 20% off on all products.
-      </p>
-    </div>
-    <span className="status-badge status-expired">expired</span>
-  </div>
+    <span className="status-badge status-active">{cupon.status}</span>
+  </div>))}
+ 
+  
+
+
 </div>
 
     </div>
@@ -119,7 +147,7 @@ const Cupon = () => {
         <div>
             <button className='fs-3 position-absolute ' style={{top:'10%', left:'85%', border:'none', background:'transparent'}} onClick={toggleForm}><FontAwesomeIcon icon={faRemove}/></button>
         </div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="couponCode" className="form-label">
               Coupon Code
@@ -130,10 +158,13 @@ const Cupon = () => {
               id="couponCode"
               placeholder="Enter coupon code"
               required=""
+              onChange={handleInputChange}
+              value={cuponData.code}
+              name='code'
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="discount" className="form-label">
+            <label htmlFor="discountValue" className="form-label">
               Discount (%)
             </label>
             <input
@@ -144,25 +175,31 @@ const Cupon = () => {
               min={1}
               max={100}
               required=""
+              onChange={handleInputChange}
+              value={cuponData.discountValue}
+              name='discountValue'
             />
           </div>
           <div className="row g-3 mb-3">
             <div className="col-md-6">
-              <label htmlFor="startDate" className="form-label">
-                Start Date
+              <label htmlFor="usageLimit" className="form-label">
+                Usage Limit
               </label>
               <input
-                type="date"
+                type="number"
                 className="form-control"
                 id="startDate"
                 required=""
+                onChange={handleInputChange}
+                value={cuponData.usageLimit}
+                name='usageLimit'
               />
             </div>
             <div className="col-md-6">
-              <label htmlFor="endDate" className="form-label">
+              <label htmlFor="expiryDate" className="form-label">
                 End Date
               </label>
-              <input type="date" className="form-control" id="endDate" required="" />
+              <input type="date" className="form-control" id="endDate" required="" onChange={handleInputChange} value={cuponData.expiryDate} name='expiryDate'/>
             </div>
           </div>
           <div className="mb-3">
@@ -188,6 +225,9 @@ const Cupon = () => {
               placeholder="Add a brief description..."
               required=""
               defaultValue={""}
+              onChange={handleInputChange}
+              value={cuponData.description}
+              name='description'
             />
           </div>
           <button type="submit" className="btn btn-primary">

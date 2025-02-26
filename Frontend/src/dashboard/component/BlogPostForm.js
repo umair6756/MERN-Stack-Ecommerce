@@ -4,51 +4,103 @@ import "react-quill/dist/quill.snow.css";
 import "./Sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignCenter, faAlignLeft, faAlignRight, faDeleteLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
-
+import { useEffect } from "react";
 const BlogPostForm = () => {
-  const [blogData, setBlogData] = useState({
-    title: "",
-    author: "",
-    date: "",
-    description: "",
-    content: "",
-    heroImage: null, // To store the Hero Image file
-  });
+  // const [blogData, setBlogData] = useState({
+  //   title: "",
+  //   author: "",
+  //   date: "",
+  //   description: "",
+  //   content: "",
+  //   heroImage: null, // To store the Hero Image file
+  // });
 
-  console.log(blogData)
+
 
   // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setBlogData({ ...blogData, [name]: value });
+
+
+
+
+  const [blogs, setBlogs] = useState({
+      title: "",
+      author: "",
+      date: "",
+      description: "",
+      content: "",
+      heroImage: null,
+    });
+
+
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setBlogs({ ...blogs, [name]: value });
+  
+    };
+    
+  
+  
+  
+  
+    const [image, setImage] = useState(null);
+ 
+  
+    const handleImageChange = (e) => {
+      const file = e.target.files[0];
+  
+      if (file) {
+        setBlogs({ ...blogs, heroImage: file });
+        const reader = new FileReader();
+        
+  
+        reader.onload = (event) => {
+          setImage(event.target.result); // Set the base64 image data to state
+        };
+  
+        reader.readAsDataURL(file);
+      } else {
+        setBlogs({ ...blogs, heroImage: null });
+        setImage(null); // Reset image if no file is selected
+      }
+    };
+  
+    
+
+    console.log(blogs)
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append('title', blogs.title);
+    formData.append('author', blogs.author);
+    formData.append('date', blogs.date);
+    formData.append('description', blogs.description);
+    formData.append('content', blogs.content);
+    formData.append("heroImage", blogs.heroImage)
+    
+  
+  
+    fetch("http://localhost:5000/blog", {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Blog Added Successfully");
+        } else {
+          alert("Blog Added Successfully");
+        }
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
   };
-
-  // Handle hero image file change
-  const handleHeroImageChange = (e) => {
-    const file = e.target.files[0];
-    setBlogData({ ...blogData, heroImage: file });
-  };
-
-
-
-  const [image, setImage] = useState(null);
-  const pictureImageTxt = "Choose an image";
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        setImage(event.target.result); // Set the base64 image data to state
-      };
-
-      reader.readAsDataURL(file);
-    } else {
-      setImage(null); // Reset image if no file is selected
-    }
-  };
+  
+  
 
 
 
@@ -56,60 +108,82 @@ const BlogPostForm = () => {
 
   // Handle content change in ReactQuill
   const handleContentChange = (value) => {
-    setBlogData({ ...blogData, content: value });
+    setBlogs({ ...blogs, content: value });
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Blog Data:", blogData);
-    // Perform the logic to submit the data (e.g., API call)
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("Blog Data:", blogData);
+  //   // Perform the logic to submit the data (e.g., API call)
+  // };
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [controlsVisible, setControlsVisible] = useState(false);
 
-  const handleImageClick = (event) => {
-    const clickedElement = event.target;
-    if (clickedElement.tagName === "IMG") {
-      setSelectedImage(clickedElement); // Store the clicked image
-      setControlsVisible(true); // Show image controls
-    } else {
-      setSelectedImage(null); // Deselect the image
-      setControlsVisible(false); // Hide image controls
-    }
-  };
+  
 
+
+
+
+  useEffect(() => {
+    const handleImageClick = (event) => {
+      const clickedElement = event.target;
+      if (clickedElement.tagName === "IMG") {
+        setSelectedImage(clickedElement);
+        setControlsVisible(true);
+      } else {
+        setSelectedImage(null);
+        setControlsVisible(false);
+      }
+    };
+
+    const editor = document.querySelector(".ql-editor");
+    if (editor) {
+      editor.addEventListener("click", handleImageClick);
+    }
+
+    return () => {
+      if (editor) {
+        editor.removeEventListener("click", handleImageClick);
+      }
+    };
+  }, []);
+
+  // Resize Image
   const resizeImage = (size, isWidth = true) => {
     if (selectedImage) {
       if (isWidth) {
         selectedImage.style.width = size;
-        selectedImage.style.height = size; // Ensure height matches the width for a square
+        selectedImage.style.height = "auto"; // Maintain aspect ratio
       } else {
         selectedImage.style.height = size;
-        selectedImage.style.width = size; // Ensure width matches the height for a square
+        selectedImage.style.width = "auto"; // Maintain aspect ratio
       }
-      selectedImage.style.objectFit = "cover"; // Ensure image fills the square without distortion
     }
   };
 
+  // Align Image
   const alignImage = (alignment) => {
     if (selectedImage) {
       selectedImage.style.display = "block";
-      selectedImage.style.marginLeft = alignment === "center" ? "auto" : "0";
-      selectedImage.style.marginRight = alignment === "center" ? "auto" : "0";
+      selectedImage.style.margin = alignment === "center" ? "0 auto" : "0";
       selectedImage.style.float =
         alignment === "left" || alignment === "right" ? alignment : "none";
     }
   };
 
+  // Remove Image
   const removeImage = () => {
     if (selectedImage) {
-      selectedImage.remove(); // Remove the selected image
-      setSelectedImage(null); // Clear the selected image
-      setControlsVisible(false); // Hide image controls
+      selectedImage.remove();
+      setSelectedImage(null);
+      setControlsVisible(false);
     }
   };
+
+
+
 
   // Define the toolbar with additional features
   const modules = {
@@ -122,7 +196,7 @@ const BlogPostForm = () => {
       ["link", "image", "blockquote", "code-block", "formula"],
       [{ align: [] }],
       ["emoji", "table", "video", "audio"],  // Additional options like emojis, tables, etc.
-      ["color", "background"],
+      [{ color: [] }, { background: [] }], 
     ],
   };
 
@@ -133,73 +207,91 @@ const BlogPostForm = () => {
 
   return (
     <div className="advanced-blog-form-container py-5 ">
+      <form onSubmit={handleSubmit} className="">
+        <div className="d-flex flex-wrap">
     <div className="advanced-blog-form py-5">
-      <form onSubmit={handleSubmit}>
+      
         <h1>Create Blog Post</h1>
 
         <label>Title</label>
         <input
           type="text"
           name="title"
-          value={blogData.title}
+          value={blogs.title}
           onChange={handleInputChange}
           placeholder="Enter Blog Title"
+          required= "true"
         />
 
         <label>Author</label>
         <input
           type="text"
           name="author"
-          value={blogData.author}
+          value={blogs.author}
           onChange={handleInputChange}
           placeholder="Enter Author Name"
+          required= "true"
+
         />
 
         <label>Date</label>
         <input
           type="date"
           name="date"
-          value={blogData.date}
+          value={blogs.date}
           onChange={handleInputChange}
+          required= "true"
+
         />
 
         <label>Description</label>
         <textarea
           name="description"
-          value={blogData.description}
+          value={blogs.description}
           onChange={handleInputChange}
           placeholder="Enter Blog Description"
+          required= "true"
+
         ></textarea>
 
 
 
         <label>Blog Content</label>
-        <div onClick={handleImageClick}>
+        <div>
           <ReactQuill
             theme="snow"
-            value={blogData.content}
+            value={blogs.content}
             onChange={handleContentChange}
             modules={modules}
             formats={formats}
             placeholder="Write your content here..."
+            required= "true"
+
           />
         </div>
 
         {controlsVisible && selectedImage && (
           <div className="image-controls">
-            <button onClick={() => resizeImage("100%", true)}>100%</button>
-            <button onClick={() => resizeImage("75%", true)}>75%</button>
-            <button onClick={() => resizeImage("50%", true)}>50%</button>
-            <button onClick={() => resizeImage("25%", true)}>25%</button>
-            <button onClick={() => alignImage("left")}><FontAwesomeIcon icon={faAlignLeft}/></button>
-            <button onClick={() => alignImage("center")}><FontAwesomeIcon icon={faAlignCenter}/></button>
-            <button onClick={() => alignImage("right")}><FontAwesomeIcon icon={faAlignRight}/></button>
-            <button onClick={removeImage}><FontAwesomeIcon icon={faTrash}/></button>
+    <button onClick={(e) => { e.preventDefault(); resizeImage("100%", true); }}>100%</button>
+    <button onClick={(e) => { e.preventDefault(); resizeImage("75%", true); }}>75%</button>
+    <button onClick={(e) => { e.preventDefault(); resizeImage("50%", true); }}>50%</button>
+    <button onClick={(e) => { e.preventDefault(); resizeImage("25%", true); }}>25%</button>
+    <button onClick={(e) => { e.preventDefault(); alignImage("left"); }}>
+      <FontAwesomeIcon icon={faAlignLeft}/>
+    </button>
+    <button onClick={(e) => { e.preventDefault(); alignImage("center"); }}>
+      <FontAwesomeIcon icon={faAlignCenter}/>
+    </button>
+    <button onClick={(e) => { e.preventDefault(); alignImage("right"); }}>
+      <FontAwesomeIcon icon={faAlignRight}/>
+    </button>
+    <button onClick={(e) => { e.preventDefault(); removeImage(); }}>
+      <FontAwesomeIcon icon={faTrash}/>
+    </button>
           </div>
         )}
 
-        <button type="submit" className="btn-submit my-3">Save Blog</button>
-      </form>
+      
     </div>
 
     <div className="blog-heroImage" style={{paddingTop:'5rem'}}>
@@ -209,20 +301,27 @@ const BlogPostForm = () => {
           {image ? (
             <img src={image} alt="Uploaded Preview" className="picture__img" />
           ) : (
-            <p>{pictureImageTxt}</p>
+            <p>Hero Image</p>
           )}
         </div>
       </label>
       <input
         id="picture__input"
+        name="heroImage"
         type="file"
         className="picture__input"
         accept="image/*"
         onChange={handleImageChange}
+        required= "true"
+
       />
     </div>
 
     </div>
+    </div>
+    <button type="submit" className="btn-submit my-3">Save Blog</button>
+
+    </form>
     </div>
   );
 };

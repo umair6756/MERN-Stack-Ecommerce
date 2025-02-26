@@ -1,51 +1,65 @@
-import { faBlogger } from '@fortawesome/free-brands-svg-icons';
-import { faBars, faBell, faBlog, faBuilding, faEye, faGift, faLightbulb, faMessage, faMoon, faSearch, faShieldHeart, faShoppingBag, faShoppingCart, faStore, faSun, faTableColumns } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react'
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Line, Bar, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js';
+import { faBlogger } from "@fortawesome/free-brands-svg-icons";
+import {
+  faBars,
+  faBell,
+  faBlog,
+  faBuilding,
+  faEye,
+  faGift,
+  faLightbulb,
+  faMessage,
+  faMoon,
+  faSearch,
+  faShieldHeart,
+  faShoppingBag,
+  faShoppingCart,
+  faStore,
+  faSun,
+  faTableColumns,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useContext } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Line, Bar, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, registerables } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import "chart.js/auto"; // Required for Chart.js integration
 
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
-import UserReviews from './UserReviews';
+import UserReviews from "./UserReviews";
+import { adminContext } from "./adminContext";
 
 ChartJS.register(...registerables);
 
 const Dashboard = () => {
-
-
   const [showSidebar, setShowSidebar] = useState(true);
-  const [theme, setTheme] = useState("light")
+   
+  const {toggleTheme} = useContext(adminContext)
 
-  const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
-
-  // Apply the theme to the 'html' element
-  document.documentElement.setAttribute('data-theme', theme);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
-  }
-
+  };
 
   // chart
 
-
   const ProductsCatagory = {
-    labels: ['Clothes', 'Watches', 'Electronics', 'bags', 'Glasses'],
-    datasets: [{
-      data: [30, 25, 20, 25, 10],
-      backgroundColor: ['#3a4ed5', '#38d39f', '#ff6b6b', '#feca57', '#54a0ff']
-    }]
+    labels: ["Clothes", "Watches", "Electronics", "bags", "Glasses"],
+    datasets: [
+      {
+        data: [30, 25, 20, 25, 10],
+        backgroundColor: [
+          "#3a4ed5",
+          "#38d39f",
+          "#ff6b6b",
+          "#feca57",
+          "#54a0ff",
+        ],
+      },
+    ],
   };
-
-
-
 
   // Example order status data
   const orderData = {
@@ -88,28 +102,38 @@ const Dashboard = () => {
     },
   };
 
-
-
-
   //  ===========  Monthly Sales chart     ===============
-
-
 
   const chartRef = useRef(null);
 
   useEffect(() => {
     const ctx = chartRef.current.getContext("2d");
 
-    const productASales = [1000, 1500, 1800, 2000, 2200, 2500, 2700, 3000, 3200, 3500, 3800, 1200];
-    const productBSales = [800, 1100, 1400, 1600, 1800, 2100, 2500, 2800, 3100, 3300, 3600, 1000];
+    const productASales = [
+      1000, 1500, 1800, 2000, 2200, 2500, 2700, 3000, 3200, 3500, 3800, 1200,
+    ];
+    const productBSales = [
+      800, 1100, 1400, 1600, 1800, 2100, 2500, 2800, 3100, 3300, 3600, 1000,
+    ];
 
-    const totalSales = productASales.map((sales, index) => sales + productBSales[index]);
+    const totalSales = productASales.map(
+      (sales, index) => sales + productBSales[index]
+    );
 
     const data = {
       labels: [
-        "January", "February", "March", "April", "May",
-        "June", "July", "August", "September", "October",
-        "November", "December"
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
       ],
       datasets: [
         {
@@ -171,9 +195,7 @@ const Dashboard = () => {
     };
   }, []);
 
-
   //   ==========   User Reviews Chart    =====================
-
 
   // Example data for latest orders
   const orders = [
@@ -189,7 +211,6 @@ const Dashboard = () => {
     { month: "Oct", count: 15 },
     { month: "Nov", count: 25 },
     { month: "Dec", count: 22 },
-
   ];
 
   // Process orders data for the chart
@@ -263,10 +284,7 @@ const Dashboard = () => {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   };
 
-
-
-  // user profile 
-
+  // user profile
 
   const [isOpen, setIsOpen] = useState(false); // To toggle the popup visibility
   const [isEditing, setIsEditing] = useState(false); // To toggle between view/edit mode
@@ -317,147 +335,161 @@ const Dashboard = () => {
     setUserInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
   };
 
-
   return (
     <div className="home-container">
       <header>
         <div className="logosec">
           <div className="logo">Hafiz Store</div>
 
-          <FontAwesomeIcon icon={faBars} onClick={toggleSidebar} className='fs-3' />
+          <FontAwesomeIcon
+            icon={faBars}
+            onClick={toggleSidebar}
+            className="fs-3"
+          />
         </div>
         <div className="searchbar">
           <input type="text" placeholder="Search" />
           <div className="searchbtn">
-            <FontAwesomeIcon icon={faSearch} style={{ fontSize: '20px' }}
-
-            />
+            <FontAwesomeIcon icon={faSearch} style={{ fontSize: "20px" }} />
           </div>
         </div>
         <div className="message">
-          <div className="circle" />
-          <FontAwesomeIcon icon={faBell} className='icn' />
+          <div className="" />
+          <div className="notification-container">
+            <Link to="/message"><span className="bell-icon">🔔</span></Link>
+            <span className="notification-badge">5</span>
+            <div className="message-list">
+              <div className="user-message-box">
+                <div className="message-content">
+                  <div className="message-title">New message from John</div>
+                  <div className="message-time">2 min ago</div>
+                </div>
+              </div>
+              <div className="user-message-box">
+                <div className="message-content">
+                  <div className="message-title">Your order has shipped</div>
+                  <div className="message-time">10 min ago</div>
+                </div>
+              </div>
+              
+             
 
-
-          {/* user profile   */}
-          <div >
-          <div>
-      {/* Small Profile Picture */}
-      <div className="profile-container p-5">
-        <img
-          src={tempImage || userInfo.image}
-          alt="Admin Profile"
-          className="profile-picture"
-          onClick={togglePopup}
-        />
-      </div>
-
-      {/* Overlay */}
-      {isOpen && <div className="overlay" onClick={togglePopup}></div>}
-
-      {/* Popup */}
-      {isOpen && (
-        <div className="popup">
-          {/* Header Section */}
-          <div className="popup-header">
-            <div className="image-upload">
-              <label htmlFor="imageUpload">
-                <img
-                  src={tempImage || userInfo.image}
-                  alt="Admin"
-                  className="admin-image"
-                  title="Click to change image"
-                />
-              </label>
-              <input
-                id="imageUpload"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: "none" }}
-              />
-            </div>
-            <div className="admin-info">
-              <h5>{userInfo.name}</h5>
-              <p>{userInfo.role}</p>
             </div>
           </div>
 
-          {/* Toggle between viewing and editing */}
-          {isEditing ? (
-            <div className="popup-body edit-mode">
-              <h6>Edit Profile</h6>
-              <form>
-                <div className="form-group">
-                  <label>Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={userInfo.name}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={userInfo.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Phone</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={userInfo.phone}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="save-btn"
-                  onClick={() => setIsEditing(false)}
-                >
-                  Save
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div className="popup-body">
-              <ul className="popup-links">
-                <li>
-                  <button onClick={() => setIsEditing(true)}>
-                    <i className="fas fa-user-cog"></i> Profile Settings
-                  </button>
-                </li>
-                <li>
-                  <button>
-                    <i className="fas fa-sign-out-alt"></i> Logout
-                  </button>
-                </li>
-              </ul>
+          {/* user profile   */}
+          <div>
+            <div>
+              {/* Small Profile Picture */}
+              <div className="profile-container p-5">
+                <img
+                  src={tempImage || userInfo.image}
+                  alt="Admin Profile"
+                  className="profile-picture"
+                  onClick={togglePopup}
+                />
+              </div>
 
+              {/* Overlay */}
+              {isOpen && <div className="overlay" onClick={togglePopup}></div>}
 
+              {/* Popup */}
+              {isOpen && (
+                <div className="popup">
+                  {/* Header Section */}
+                  <div className="popup-header">
+                    <div className="image-upload">
+                      <label htmlFor="imageUpload">
+                        <img
+                          src={tempImage || userInfo.image}
+                          alt="Admin"
+                          className="admin-image"
+                          title="Click to change image"
+                        />
+                      </label>
+                      <input
+                        id="imageUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <div className="admin-info">
+                      <h5>{userInfo.name}</h5>
+                      <p>{userInfo.role}</p>
+                    </div>
+                  </div>
+
+                  {/* Toggle between viewing and editing */}
+                  {isEditing ? (
+                    <div className="popup-body edit-mode">
+                      <h6>Edit Profile</h6>
+                      <form>
+                        <div className="form-group">
+                          <label>Name</label>
+                          <input
+                            type="text"
+                            name="name"
+                            value={userInfo.name}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Email</label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={userInfo.email}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Phone</label>
+                          <input
+                            type="text"
+                            name="phone"
+                            value={userInfo.phone}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          className="save-btn"
+                          onClick={() => setIsEditing(false)}
+                        >
+                          Save
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="popup-body">
+                      <ul className="popup-links">
+                        <li>
+                          <button onClick={() => setIsEditing(true)}>
+                            <i className="fas fa-user-cog"></i> Profile Settings
+                          </button>
+                        </li>
+                        <li>
+                          <button>
+                            <i className="fas fa-sign-out-alt"></i> Logout
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
-    </div>
           </div>
         </div>
       </header>
-
 
       <div className="main-container">
         <div className={`navcontainer ${showSidebar ? "navclose" : ""}`}>
           <nav className="nav">
             <div className="nav-upper-options">
-
-
               <div className="nav-option option1">
-
                 <FontAwesomeIcon icon={faTableColumns} />
                 <h3> Dashboard</h3>
               </div>
@@ -465,7 +497,7 @@ const Dashboard = () => {
               <Link to="/productpage">
                 <div className="option2 nav-option">
                   <FontAwesomeIcon icon={faGift} />
-                  <h3 > Products</h3>
+                  <h3> Products</h3>
                 </div>
               </Link>
 
@@ -482,10 +514,12 @@ const Dashboard = () => {
                   <h3> Orders</h3>
                 </div>
               </Link>
-              <div className="nav-option option5">
-                <FontAwesomeIcon icon={faMessage} />
-                <h3>Messages</h3>
-              </div>
+              <Link to="/message">
+                <div className="nav-option option5">
+                  <FontAwesomeIcon icon={faMessage} />
+                  <h3>Messages</h3>
+                </div>
+              </Link>
               <Link to="/reviews">
                 <div className="nav-option option6">
                   <FontAwesomeIcon icon={faShieldHeart} />
@@ -500,30 +534,49 @@ const Dashboard = () => {
                 </div>
               </Link>
 
-
               <div className="nav-option logout">
                 <FontAwesomeIcon icon={faBuilding} />
                 <h3>Others</h3>
               </div>
 
-              <div className='toggle-switch' style={{ paddingBottom: "5rem" }}>
+              <div className="toggle-switch" style={{ paddingBottom: "5rem" }}>
                 <label className=" ">
-                  <input class='toggle-checkbox' type='checkbox' onClick={toggleTheme}></input>
-                  <div class='toggle-slot '>
-                    <div class='sun-icon-wrapper'>
-                      <div class="iconify sun-icon" data-icon="feather-sun" data-inline="false"><FontAwesomeIcon icon={faLightbulb} className='iconify sun-icon' /></div>
+                  <input
+                    class="toggle-checkbox"
+                    type="checkbox"
+                    onClick={toggleTheme}
+                  ></input>
+                  <div class="toggle-slot ">
+                    <div class="sun-icon-wrapper">
+                      <div
+                        class="iconify sun-icon"
+                        data-icon="feather-sun"
+                        data-inline="false"
+                      >
+                        <FontAwesomeIcon
+                          icon={faLightbulb}
+                          className="iconify sun-icon"
+                        />
+                      </div>
                     </div>
-                    <div class='toggle-button'></div>
-                    <div class='moon-icon-wrapper'>
-                      <div class="iconify moon-icon" data-icon="feather-moon" data-inline="false"><FontAwesomeIcon icon={faMoon} className='iconify moon-icon' /> </div>
+                    <div class="toggle-button"></div>
+                    <div class="moon-icon-wrapper">
+                      <div
+                        class="iconify moon-icon"
+                        data-icon="feather-moon"
+                        data-inline="false"
+                      >
+                        <FontAwesomeIcon
+                          icon={faMoon}
+                          className="iconify moon-icon"
+                        />{" "}
+                      </div>
                     </div>
                   </div>
                 </label>
-
               </div>
             </div>
           </nav>
-
         </div>
         <div className="main">
           <div className="searchbar2">
@@ -535,24 +588,16 @@ const Dashboard = () => {
 
           {/* =================   chart    =========== */}
 
-
-
-
           <div className="chart-contain">
             <h2>Total Monthly Sales (Line Chart)</h2>
             <canvas ref={chartRef} />
           </div>
 
-
-
-
           <div className="chart-container">
-
             <div className="chart">
               <h2>Product Catagory</h2>
               <Pie data={ProductsCatagory} />
             </div>
-
 
             <div
               //   style={{
@@ -564,7 +609,7 @@ const Dashboard = () => {
               //     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
               //   }}
 
-              className='chart'
+              className="chart"
             >
               <h3 style={{ textAlign: "center", marginBottom: "20px" }}>
                 Order Status Overview
@@ -573,16 +618,7 @@ const Dashboard = () => {
                 <Doughnut data={data} options={options} />
               </div>
             </div>
-
-
           </div>
-
-
-
-
-
-
-
 
           <div className="report-container">
             <div className="report-header">
@@ -655,16 +691,17 @@ const Dashboard = () => {
             </div>
           </div>
           <div style={containerStyle}>
-            <h2 style={{ marginBottom: "20px", color: "var(--text-color)" }}>User Reviews</h2>
+            <h2 style={{ marginBottom: "20px", color: "var(--text-color)" }}>
+              User Reviews
+            </h2>
             <div style={chartStyle}>
               <Bar data={reviewsData} options={option} />
             </div>
           </div>
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

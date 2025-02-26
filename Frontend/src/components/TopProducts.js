@@ -1,18 +1,61 @@
 import React from 'react'
 import './Products.css'
 import { Link } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 
 import products from '../data/products-data.json'
 import { CartContext } from './CartContext';
 
-const firstEightProducts = products.slice(0,8);
+
 
 const TopProducts = () => {
 
+
+      const [products, setProducts] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+    
+
+
     const {addToCart, useScrollAnimation} = useContext(CartContext);
     useScrollAnimation();
+
+
+
+    useEffect(() => {
+        // Fetch product data from the backend
+        fetch('http://localhost:5000/product') // Change the URL based on your API endpoint
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Error fetching products');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            setProducts(data);  // Set the fetched products
+            setLoading(false);   // Stop loading
+          })
+          .catch((err) => {
+            setError(err.message);  // Handle error
+            setLoading(false);
+          });
+      }, []); // Empty dependency array ensures this runs only once (on component mount)
+    
+      // If loading, display a loading message
+      if (loading) {
+        return <div>Loading products...</div>;
+      }
+    
+      // If error occurs, display an error message
+      if (error) {
+        return <div>Error: {error}</div>;
+      }
+  
+
+
+      const lastEightProducts = products.slice(-8);
+
     return (
         <div className='product-container'>
             <div className='headings'>
@@ -22,14 +65,14 @@ const TopProducts = () => {
 
             <div className="product-grid">
 
-                {firstEightProducts .map(product => (
+                {lastEightProducts.map(product => (
                     <div key={product.id} className='product-card animationBox'>
                         <div className="product-image">
                         <Link to={`/product/${product.id}`} className="image">
-                                <img src={product.image} alt={product.name}></img>
+                                <img src={product.productImage} alt={product.productName}></img>
                         </Link>
-                            {product.onSale && (
-                                <span className="product-discount-label">{product.sale}</span>
+                            {product.productSale && (
+                                <span className="product-discount-label">{product.productSale}</span>
                             )}
 
                             <ul className="product-links">
@@ -55,15 +98,15 @@ const TopProducts = () => {
                         </div>
                         <div className="product-content">
                             <h3 className="title">
-                                <a href="#">{product.name}</a>
+                                <a href="#">{product.productName}</a>
                             </h3>
                             <div className="price">
-                            {product.onSale ? (
+                            {product.productSale ? (
                                        <>
-                                      <span>{product.price - (product.price * product.sale / 100).toFixed(2)}</span>
-                                      <span className='mx-1' style={{color: "#888", textDecoration:"line-through", fontWeight: "400"}}>{product.price}</span>
+                                      <span>{product.productPrice - (product.productPrice * product.productSale / 100).toFixed(2)}</span>
+                                      <span className='mx-1' style={{color: "#888", textDecoration:"line-through", fontWeight: "400"}}>{product.productPrice}</span>
                                       </>
-                                ): product.price}
+                                ): product.productPrice}
                             </div>
                         </div>
 

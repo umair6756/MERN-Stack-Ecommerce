@@ -35,7 +35,7 @@ export const CartProvider = ({children}) => {
 
     const addToCart = (product) => {
       setCart((prevCart) => {
-        const exists = prevCart.find((item) => item.id === product.id);
+        const exists = prevCart.find((item) => item.id === product._id);
         toast.success("Product added successfully 🧡 ", {
           position: "top-right",
           autoClose: 3000,  
@@ -46,7 +46,7 @@ export const CartProvider = ({children}) => {
   
         if (exists) {
           return prevCart.map((item) =>
-            item.id === product.id
+            item.id === product._id
               ? { ...item, quantity: item.quantity + 1 }
               : item
           );
@@ -93,12 +93,12 @@ export const CartProvider = ({children}) => {
 
     const calculateProductPrice = () => {
       return cart.reduce((total, product) => {
-        const productPrice = product.onSale
-          ? product.price - (product.price * product.sale) / 100
-          : product.price;
+        const prodPrice = product.productSale
+          ? product.productPrice - (product.productPrice * product.productSale) / 100
+          : product.productPrice;
         
     
-        return total + productPrice * (product.quantity || 1);
+        return total + prodPrice * (product.quantity || 1);
       }, 0).toFixed(2); 
     }
 

@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './ViewProducts.css'
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowUp, faArrowsUpDown, faBorderAll, faCross, faEllipsisVertical, faFilter, faList, faMoon, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowUp, faArrowsUpDown, faBorderAll, faCross, faEllipsisVertical, faFilter, faList, faMoon, faPen, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from '../component/Sidebar';
 import { adminContext } from '../component/adminContext'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 
 const ViewProducts = () => {
@@ -30,28 +30,166 @@ const ViewProducts = () => {
   const [onSale, setOnSale] = useState(false);
   const [formVisible, setFormVisible] = useState(false)
 
-  const toggleForm = () => {
-    setFormVisible((prev) => !prev)
+  const [searchTerm, setSearchTerm] = useState("")
+
+const [categories, setCategories] = useState({
+        Watches: false,
+        Clothes: false,
+        Glases: false,
+        Bags:false,
+        Others:false
+
+    });
+
+
+
+    const {id} = useParams()
+
+
+
+
+     const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchProducts();
+}, []);
+
+
+  const fetchProducts = async () => {
+    // Fetch product data from the backend
+    fetch('http://localhost:5000/product') // Change the URL based on your API endpoint
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error fetching products');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setProducts(data);  // Set the fetched products
+        setLoading(false);   // Stop loading
+      })
+      .catch((err) => {
+        setError(err.message);  // Handle error
+        setLoading(false);
+      });
+    };
+// Empty dependency array ensures this runs only once (on component mount)
+
+// const deleteProduct = async (id) => {
+//   try{
+//   fetch(`http://localhost:5000/product/${id}`, {
+//     method: "DELETE",
+//   })
+//   setProducts(products.filter((product) => product._id !== id))
+//   alert("Product Deleted Successfully")
+// }catch(error){
+//   alert("Product Not Deleted")
+//   console.log(error)
+// }
+// }
+
+const deleteProduct = async (id) => {
+  try {
+    // Make the DELETE request and wait for the response
+    const response = await fetch(`http://localhost:5000/product/${id}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      // Only update the state if the deletion was successful
+      setProducts(products.filter((product) => product._id !== id));
+      alert("Product Deleted Successfully");
+    } else {
+      alert("Product Not Deleted");
+    }
+  } catch (error) {
+    alert("Product Not Deleted");
+    console.log(error);
+  }
+};
+
+
+
+
+
+
+
+
+
+  // If loading, display a loading message
+  if (loading) {
+    return <div>Loading products...</div>;
   }
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
+  // If error occurs, display an error message
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+
+
+  const filteredProducts = products.filter((product) => {
+    // Search filtering
+    const matchesSearch = searchTerm
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .split("")
+      .every((char) =>
+        product.productName.toLowerCase().replace(/\s+/g, "").includes(char)
+      );
+  
+    // Category filtering
+    const matchesCategory =
+      Object.keys(categories).some(
+        (key) => categories[key] && product.productCatogary === key
+      ) || !Object.values(categories).includes(true); // Show all if no category is selected
+  
+    return matchesSearch && matchesCategory;
+  });
+  
+
+
+
+
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+  
+    // If "All" is selected, reset the categories to show all
+    if (selectedCategory === "All") {
+      setCategories({
+        Watches: false,
+        Clothing: false,
+        Glasses: false,
+        Bags: false,
+        Others: false,
+      });
+    } else {
+      // Toggle the selected category
+      setCategories({
+        ...categories,
+        [selectedCategory]: !categories[selectedCategory],
+      });
     }
   };
+  
+
+
+
+
+const handleSearch = (e) => {
+  setSearchTerm(e.target.value);
+}
+
+
 
   return (
     <div>
- 
+
 <div className="app-container">
-  <div className="sidebar">
-    <div className="sidebar-header">
-
-    </div>
 
 
-  </div>
   <div className="app-content">
     <div className="app-content-header">
       <h1 className="app-content-headerText">Products</h1>
@@ -64,21 +202,27 @@ const ViewProducts = () => {
       </Link>
     </div>
     <div className="app-content-actions">
-      <input className="search-bar" placeholder="Search..." type="text" />
+      <input className="search-bar" placeholder="Search..." type="text" onChange={handleSearch}/>
       <div className="app-content-actions-wrapper">
         <div className="filter-button-wrapper">
-          <button className="action-button filter jsFilter" onClick={toggleFilterMenu()}>
+          <button className="action-button filter jsFilter" onClick={toggleFilterMenu}>
             <span>Filter</span>
             <FontAwesomeIcon icon={faFilter}/>
           </button>
-          <div className={`filter-menu ${isFilterActive ? 'active' : ''}`}>
+          <div className={`filter-menu ${isFilterActive ? 'active' : ''}`}  style={{zIndex:'1000'}}>
             <label>Category</label>
-            <select>
-              <option>All Categories</option>
-              <option>Furniture</option> <option>Decoration</option>
-              <option>Kitchen</option>
-              <option>Bathroom</option>
-            </select>
+           
+            <select onChange={handleCategoryChange} >
+            <option value="All">All</option> {/* Added "All" option */}
+  {Object.keys(categories).map((category) => (
+    <option key={category} value={category}>
+      {category}
+    </option>
+  ))}
+</select>
+
+
+
             <label>Status</label>
             <select>
               <option>All Status</option>
@@ -99,6 +243,7 @@ const ViewProducts = () => {
         </button>
       </div>
     </div>
+    {filteredProducts.length > 0 ? (
     <div className={`products-area-wrapper ${isGridView ? 'gridView' : 'tableView'}`}>
       <div className="products-header">
         <div className="product-cell image">
@@ -130,371 +275,43 @@ const ViewProducts = () => {
 
         </div>
       </div>
+      {filteredProducts.map((product) => (
       <div className="products-row">
         <button className="cell-more-button">
           <FontAwesomeIcon icon={faEllipsisVertical}/>
         </button>
         <div className="product-cell image">
           <img
-            src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
-            alt="product"
+            src={product.productImage}
+            alt={product.productName}
           />
-          <span>Ocean</span>
+          <span>{product.productName}</span>
         </div>
         <div className="product-cell category">
-          <span className="cell-label">Category:</span>Furniture
+          <span className="cell-label">Category:</span>{product.productCatogary}
         </div>
         <div className="product-cell status-cell">
           <span className="cell-label">Status:</span>
           <span className="status active">Active</span>
         </div>
         <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>11
+          <span className="cell-label">Sales:</span>{product.productSale}
         </div>
         <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>36
+          <span className="cell-label">Stock:</span>{product.productStock}
         </div>
         <div className="product-cell price">
-          <span className="cell-label">Price:</span>$560
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1484154218962-a197022b5858?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8a2l0Y2hlbnxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Lou</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Kitchen
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status disabled">Disabled</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>6
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>46
+          <span className="cell-label">Price:</span>{product.productPrice}
         </div>
         <div className="product-cell price">
-          <span className="cell-label">Price:</span>$710
+          <span className="cell-label">Action:</span><FontAwesomeIcon icon={faTrash} onClick={() => deleteProduct(product._id)}/>  
         </div>
       </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDR8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Yellow</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Decoration
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>61
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>56
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$360
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8YmVkcm9vbXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Dreamy</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Bedroom
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status disabled">Disabled</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>41
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>66
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$260
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1554995207-c18c203602cb?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8aW50ZXJpb3J8ZW58MHwwfDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Boheme</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Furniture
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>32
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>40
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$350
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1507652313519-d4e9174996dd?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTZ8fGludGVyaW9yfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Sky</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Bathroom
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status disabled">Disabled</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>22
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>44
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$160
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzB8fGludGVyaW9yfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Midnight</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Furniture
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>23
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>45
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$340
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1554995207-c18c203602cb?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8aW50ZXJpb3J8ZW58MHwwfDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Boheme</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Furniture
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>32
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>40
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$350
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1511389026070-a14ae610a1be?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzR8fGludGVyaW9yfGVufDB8MHwwfHw%3D&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Palm</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Decoration
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>24
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>46
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$60
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1600494603989-9650cf6ddd3d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTV8fGludGVyaW9yfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Forest</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Living Room
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>41
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>16
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$270
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Njd8fGludGVyaW9yfGVufDB8MHwwfHw%3D&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Sand</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Living Room
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status disabled">Disabled</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>52
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>16
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$230
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1533779283484-8ad4940aa3a8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8ODd8fGludGVyaW9yfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Autumn</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Decoration
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>21
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>46
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$252
-        </div>
-      </div>
-      <div className="products-row">
-        <button className="cell-more-button">
-        <FontAwesomeIcon icon={faEllipsisVertical}/>
-        </button>
-        <div className="product-cell image">
-          <img
-            src="https://images.unsplash.com/photo-1554995207-c18c203602cb?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8aW50ZXJpb3J8ZW58MHwwfDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=900&q=60"
-            alt="product"
-          />
-          <span>Boheme</span>
-        </div>
-        <div className="product-cell category">
-          <span className="cell-label">Category:</span>Furniture
-        </div>
-        <div className="product-cell status-cell">
-          <span className="cell-label">Status:</span>
-          <span className="status active">Active</span>
-        </div>
-        <div className="product-cell sales">
-          <span className="cell-label">Sales:</span>32
-        </div>
-        <div className="product-cell stock">
-          <span className="cell-label">Stock:</span>40
-        </div>
-        <div className="product-cell price">
-          <span className="cell-label">Price:</span>$350
-        </div>
-      </div>
+      ))}
     </div>
+   ): (
+      <div>No products available</div>
+    )}
   </div>
 </div>
 
@@ -503,102 +320,7 @@ const ViewProducts = () => {
 
 {/* =============  Product Form    ============== */}
 
-{formVisible &&  <div className="form-container">
-      <div className="show-form">
-      <h2>Add New Product</h2>
-      <button className="productForm-removeBtn" onClick={toggleForm}><FontAwesomeIcon icon={faXmark}/></button>
-      <form className="product-form">
-        <div className="product-form-group">
-          <label htmlFor="id">Product ID</label>
-          <input type="number" id="id" name="id" placeholder="Enter Product ID" required />
-        </div>
 
-        <div className="product-form-group">
-          <label htmlFor="name">Product Name</label>
-          <input type="text" id="name" name="name" placeholder="Enter Product Name" required />
-        </div>
-
-        <div className="product-form-group image-upload">
-          <label htmlFor="image" className='addProduct-image'>Product Image</label>
-          
-            <input
-              type="file"
-              id="image"
-              name="image"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-       
-          {imagePreview && (
-            <div className="image-preview">
-              <img src={imagePreview} alt="Product Preview" />
-            </div>
-          )}
-        </div>
-
-        <div className="product-form-group">
-          <label htmlFor="price">Price</label>
-          <input type="number" id="price" name="price" placeholder="Enter Price" required />
-        </div>
-
-        <div className="product-form-group">
-          <label htmlFor="discountPrice">Discount Price</label>
-          <input
-            type="number"
-            id="discountPrice"
-            name="discountPrice"
-            placeholder="Enter Discount Price"
-          />
-        </div>
-
-        <div className="product-form-group toggle-group">
-          <label htmlFor="onSale">On Sale</label>
-          <div className="switch">
-            <input
-              type="checkbox"
-              id="onSale"
-              name="onSale"
-              checked={onSale}
-              onChange={(e) => setOnSale(e.target.checked)}
-            />
-            <label htmlFor="onSale" className="slider"></label>
-          </div>
-        </div>
-
-        {onSale && (
-          <div className="product-form-group">
-            <label htmlFor="sale">Sale Percentage</label>
-            <input
-              type="number"
-              id="sale"
-              name="sale"
-              placeholder="Enter Sale Percentage"
-              required={onSale}
-            />
-          </div>
-        )}
-
-        <div className="product-form-group">
-          <label htmlFor="category">Category</label>
-          <select id="category" name="category" required>
-            <option value="">Select Category</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Home">Home</option>
-          </select>
-        </div>
-
-        <div className="product-form-group">
-          <label htmlFor="stock">Stock</label>
-          <input type="number" id="stock" name="stock" placeholder="Enter Stock Quantity" required />
-        </div>
-
-        <button type="submit" className="submit-button">
-          Add Product
-        </button>
-      </form>
-      </div>
-    </div>}
 
 
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState,useEffect } from 'react'
 import './Products.css'
 
 
@@ -6,6 +6,18 @@ import blogData from '../data/blogs-data.json'
 import { Link } from 'react-router-dom';
 import { CartContext } from './CartContext';
 const Blog = () => {
+
+
+
+
+ const [blogs, setblogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+ 
+
+
+
     // const [searchTerm, setSearchTerm] = useState("");
     const {searchTerm, setSearchTerm} = useContext(CartContext)
     const handleSearch = (e) => {
@@ -19,16 +31,51 @@ const Blog = () => {
     return matcheBlog;
 })
 
+
+
+
+useEffect(() => {
+    // Fetch product data from the backend
+    fetch('http://localhost:5000/blog') // Change the URL based on your API endpoint
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error fetching products');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setblogs(data);  // Set the fetched products
+        setLoading(false);   // Stop loading
+      })
+      .catch((err) => {
+        setError(err.message);  // Handle error
+        setLoading(false);
+      });
+  }, []); // Empty dependency array ensures this runs only once (on component mount)
+
+  // If loading, display a loading message
+  if (loading) {
+    return <div>Loading products...</div>;
+  }
+
+  // If error occurs, display an error message
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+
+
+
     return (
 
         <div className='blogPage d-flex flex-row ' style={{ background: '#f0f0f0' }}>
             <div className='blogPage-cards gap-3 d-flex flex-wrap  my-5  '>
-                {filteredBlogs.map(blog => (
+                {blogs.map(blog => (
 
                     <div key={blog.id} className="blogPage-card ">
                         <div className='blogPage-img overflow-hidden '>
-                            <Link to={`/blog/${blog.id}`}>
-                            <img src={blog.image} className='w-100 ' style={{ height: "13rem", transition: '.6s' }} ></img>
+                            <Link to={`/blog/${blog._id}`}>
+                            <img src={blog.heroImage} className='w-100 ' style={{ height: "13rem", transition: '.6s' }} ></img>
 
                             </Link>
                         </div>

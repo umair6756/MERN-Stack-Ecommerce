@@ -1,7 +1,7 @@
 
 import './ProductDetail.css'
-import { useContext, useRef, useState } from 'react'
-import products from '../data/products-data.json'
+import { useContext, useRef, useState, useEffect } from 'react'
+
 import { useNavigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,14 +14,37 @@ import { ReviewForm, Reviews, ReviewsForm } from './Reviews'
 
 const ProductDetail = () => {
 
+
+  
+    
+  const [products, setProducts] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+
+
+
   const { id } = useParams();
-  const product = products.find(p => p.id === parseInt(id));
+ 
+
+
+
+
+
+
+
+
+  
 
   // const navigate = useNavigate();
 
   const { addToCart, increament, decreament, count } = useContext(CartContext);
 
-  const total = product.discountPrice * count;
+  // const total = products.productPrice * count;
+
+  const total = 10;
+
 
 
   // for magnifying effects 
@@ -75,8 +98,54 @@ const ProductDetail = () => {
 
 
 
+    useEffect(() => {
+      // Fetch product data from the backend
+      fetch(`http://localhost:5000/product/${id}`) // Change the URL based on your API endpoint
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Error fetching products');
+          }
+          return response.json();
+        })
+        .then((data) => {
+
+// Convert productSize string to array if it is a string
+if (data.productSize && typeof data.productSize === "string") {
+  data.productSize = data.productSize.split(",");
+}
+
+// Convert productColor string to array if it is a string
+if (data.productColor && typeof data.productColor === "string") {
+  data.productColor = data.productColor.split(",");
+}
 
 
+          setProducts(data);  // Set the fetched products
+          setLoading(false);   // Stop loading
+        })
+        .catch((err) => {
+          setError(err.message);  // Handle error
+          setLoading(false);
+        });
+    }, [id]); // Empty dependency array ensures this runs only once (on component mount)
+  
+    // If loading, display a loading message
+    if (loading) {
+      return <div>Loading products...</div>;
+    }
+  
+    // If error occurs, display an error message
+    if (error) {
+      return <div>Error: {error}</div>;
+    }
+  
+
+
+
+
+
+
+    
 
 
 
@@ -86,8 +155,8 @@ const ProductDetail = () => {
 
       <div className='LinkProduct border-bottom mx-5 my-3 py-3'>
         <Link to='/product' style={{ color: '#C19A6B' }} >Products</Link>
-        <span> <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: '12px' }} /> {product.category}</span>
-        <span> <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: '12px' }} /> {product.name}</span>
+        <span> <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: '12px' }} /> {products.productCatogary}</span>
+        <span> <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: '12px' }} /> {products.productName}</span>
       </div>
       <div className='product-detail mx-5 my-5 d-flex gap-5' >
         <div className='images w-40'
@@ -96,13 +165,13 @@ const ProductDetail = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <img src={product.image} alt={product.name} ></img>
+          <img src={products.productImage} alt={products.productName} ></img>
 
         </div>
 
         {showMagnifier && (<div className='magnifier-container w-40 d-flex flex-row'
           style={{
-            background: `url(${product.image})`,
+            background: `url(${products.productImage})`,
             backgroundSize: `${zoomLevel * 100}%`,
             backgroundPosition: backgroundPosition,
             width: '45%',
@@ -119,8 +188,8 @@ const ProductDetail = () => {
         </div>)}
 
         <div className='product-detail-content  w-50'>
-          <p className='opacity-75'>{product.category}</p>
-          <h3 className='my-3' >{product.name}</h3>
+          <p className='opacity-75'>{products.productCatogary}</p>
+          <h3 className='my-3' >{products.productName}</h3>
           <div className='reviews my-4'>
             <span className="fa fa-star fs-4" style={{ color: '#C19A6B' }}></span>
             <span className="fa fa-star fs-4" style={{ color: '#C19A6B' }}></span>
@@ -138,12 +207,12 @@ const ProductDetail = () => {
             <div className='d-flex flex-row gap-5'>
               <p className='quantity-heading text-uppercase fw-bold' style={{ color: '#333', opacity: '.7'}}>price</p>
               <div>
-                {product.onSale ? (
+                {products.productSale ? (
                   <>
-                    <span style={{ color: "#C19A6B", fontWeight: "600", marginLeft:'3rem' }}>{product.price - (product.price * product.sale / 100).toFixed(2)}</span>
-                    <span className='mx-2' style={{ color: "#888", textDecoration: "line-through", fontWeight: "400" }}>{product.price}</span>
+                    <span style={{ color: "#C19A6B", fontWeight: "600", marginLeft:'3rem' }}>{products.productPrice - (products.productPrice * products.productSale / 100).toFixed(2)}</span>
+                    <span className='mx-2' style={{ color: "#888", textDecoration: "line-through", fontWeight: "400" }}>{products.productPrice}</span>
                   </>
-                ) : product.price}
+                ) : products.productPrice}
               </div>
             </div>
 
@@ -154,11 +223,11 @@ const ProductDetail = () => {
           {/* Color Picker */}
          
 
-          <div className='d-flex gap-5 my-3' >
+          {/* <div className='d-flex gap-5 my-3' >
           <p className='quantity-heading text-uppercase fw-bold' style={{ color: '#333', opacity: '.7'}}>color</p>
 
           <div className="color-picker">
-            {product.colors.map((color, colorIndex) => (
+            {products.productColor.map((color, colorIndex) => (
               <div
                 key={colorIndex}
                 className={`color-option ${selectedColor === color ? 'selected' : ''}`}
@@ -169,24 +238,25 @@ const ProductDetail = () => {
           </div>
           </div>
           {/* Size Picker */}
+           {products.productSize && products.productSize.length > 0 && (
           <div className='d-flex gap-5 my-3' >
           <p className='quantity-heading text-uppercase fw-bold' style={{ color: '#333', opacity: '.7'}}>size</p>
-
           <div className="size-picker">
-            {product.sizes.map((size, sizeIndex) => (
+            {(products.productSize || "").toString().split(",").map((size, sizeIndex) => (
               <div
                 key={sizeIndex}
                 className={`size-option ${selectedSize === size ? 'selected' : ''}`}
                 onClick={() => setSelectedSize(size)}
               >
-                {size}
+                {size.trim()}
               </div>
             ))}
          </div>
-         </div>
+         
+         </div> )}
 
           <div className='d-flex flex-row '>
-            <div className='Buttons ' onClick={() => { addToCart(product); }}>{<Button label="Add to Cart" />}</div>
+            <div className='Buttons ' onClick={() => { addToCart(products); }}>{<Button label="Add to Cart" />}</div>
             <div className='Buttons mx-5 my-0'  ><Link to="/checkout" style={{ margin: "0", padding: "0" }}>{<Button label="BUY Now" />}</Link></div>
           </div>
         </div>
@@ -208,9 +278,6 @@ const ProductDetail = () => {
 }
 
 export default ProductDetail
-
-
-
 
 
 

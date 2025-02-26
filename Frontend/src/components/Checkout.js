@@ -1,12 +1,205 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import './Checkout.css'
 import { CartContext } from './CartContext'
 import { HeroSection } from './Buttons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRightArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 
 const Checkout = () => {
 
+    // const [ordersData, setOrdersData] = useState({
+    //     custEmail: "",
+    //     custPhone: "",
+    //     custName: "",
+    //     custAddress: "",
+    //     custCity: "",
+    //     custCountry: "",
+    //     prodName: "",
+    //     prodPrice: "",
+    //     prodQuantity: "",
+    //     TotalPrice: "",
+    // })
+
+    // const handleChange = (e) => {
+    //     setOrdersData({ ...ordersData, [e.target.name]: e.target.value });
+    //   };
+
+    //   const handleSubmit = (e) => {
+    //     e.preventDefault();
+      
+       
+      
+      
+    //     fetch("http://localhost:5000/order", {
+    //       method: 'POST',
+    //       body: ordersData,
+    //     })
+    //       .then((response) => response.json())
+    //       .then((data) => {
+    //         if (data.success) {
+    //           alert("order Added Successfully");
+    //         } else {
+    //           alert("order notAdded Successfully");
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.log("Error:", error);
+    //       });
+    //   };
     const { cart, calculateProductPrice, increament, decreament } = useContext(CartContext);
+
+
+    const [orderData, setOrderData] = useState({
+        customer: {
+            name: "",
+            email: "",
+            phone: "",
+            address: "",
+            city: "",
+            country: "",
+            postalCode: "",
+        },
+        products: [], // Cart ke products
+    });
+    
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setOrderData((prevData) => ({
+            ...prevData,
+            customer: {
+                ...prevData.customer,
+                [name]: value,
+            },
+        }));
+    };
+
+console.log(orderData)
+
+    // useEffect(() => {
+    //     setOrderData((prevData) => ({
+    //         ...prevData,
+    //         products: cart.map((prod) => ({
+                
+    //             productId: prod.id,
+    //             productName: prod.productName,
+    //             productPrice: prod.productPrice,
+    //             quantity: prod.quantity,
+    //             totalPrice: prod.productPrice * prod.quantity,
+    //         })),
+    //     }));
+    // }, [cart]); // Jab bhi cart update ho, yeh effect chale
+    
+
+    useEffect(() => {
+        setOrderData((prevData) => ({
+            ...prevData,
+            products: cart.map((prod) => {
+                // ✅ Discounted price calculate karein
+                const discountedPrice = prod.productSale
+                    ? prod.productPrice - (prod.productPrice * prod.productSale / 100)
+                    : prod.productPrice;
+    
+                return {
+                    productId: prod.id,
+                    productName: prod.productName,
+                    productPrice: discountedPrice, // ✅ Sending discounted price
+                    quantity: prod.quantity,
+                    totalPrice: (discountedPrice * prod.quantity).toFixed(2), // ✅ Total price after discount
+                };
+            }),
+            // ✅ Grand total calculate using discounted price
+            totalPrice: cart.reduce((total, prod) => {
+                const discountedPrice = prod.productSale
+                    ? prod.productPrice - (prod.productPrice * prod.productSale / 100)
+                    : prod.productPrice;
+    
+                return total + (discountedPrice * prod.quantity);
+            }, 0).toFixed(2),
+        }));
+    }, [cart]);
+    
+    
+      
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        try {
+            const response = await fetch("http://localhost:5000/order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(orderData), // Convert orderData to JSON
+            });
+    
+            const data = await response.json();
+            if (data.success) {
+                alert("Order placed successfully!");
+            } else {
+                alert("Failed to place order.");
+            }
+        } catch (error) {
+            console.error("Error placing order:", error);
+            alert("Something went wrong.");
+        }
+    };
+
+
+
+
+    const [cupons, setCupons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    
+  useEffect(() => {
+    fetch("http://localhost:5000/cupon")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Error fetching Cupons');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setCupons(data);  // Set the fetched products
+      setLoading(false);   // Stop loading
+    })
+    .catch((err) => {
+      setError(err.message);  // Handle error
+      setLoading(false);
+    });
+  
+  }, [])
+
+  const [discount, setDiscount] = useState(0);
+  const [finalTotal, setFinalTotal] = useState(calculateProductPrice());
+
+  const [couponCode, setCouponCode] = useState("");
+
+ // Apply Coupon (Only in Frontend)
+ const applyCoupon = (e) => {
+  e.preventDefault(); // 👈 Prevents page refresh
+
+  const appliedCoupon = cupons.find((c) => c.code === couponCode);
+
+  if (!appliedCoupon) {
+    alert("Invalid or expired coupon");
+    return;
+  }
+
+  if (appliedCoupon.usedCount >= appliedCoupon.usageLimit) {
+    alert("Coupon usage limit reached");
+    return;
+  }
+
+  let discountAmount = (calculateProductPrice() * appliedCoupon.discountValue) / 100;
+
+  setDiscount(discountAmount);
+  setFinalTotal(calculateProductPrice() - discountAmount);
+};
+    
+
     return (
         <>
         <HeroSection heroBackground="checkout-hero"/>
@@ -17,51 +210,51 @@ const Checkout = () => {
             <div className='checkout-main w-100'>
 
                 <section class="checkout-form">
-                    <form action="#!" method="get">
+                    <form action="#!" onSubmit={handleSubmit} >
                         <h6>Contact information</h6>
                         <div class="checkout-form-control " style={{border:"none"}}>
-                            <label for="checkout-email">E-mail</label>
+                            <label for="email">E-mail</label>
                             <div >
                                 <span class="fa fa-envelope"></span>
-                                <input type="email" id="checkout-email" name="checkout-email" placeholder="Enter your email..." />
+                                <input type="email" id="checkout-email" name="email" placeholder="Enter your email..." onChange={handleChange} value={orderData.email}/>
                             </div>
                         </div>
                         <div class="checkout-form-control">
-                            <label for="checkout-phone">Phone</label>
+                            <label for="phone">Phone</label>
                             <div>
                                 <span class="fa fa-phone"></span>
-                                <input type="tel" name="checkout-phone" id="checkout-phone" placeholder="Enter you phone..." />
+                                <input type="tel" name="phone" id="checkout-phone" placeholder="Enter you phone..." onChange={handleChange} value={orderData.phone}/>
                             </div>
                         </div>
                         <br></br>
                         <h6>Shipping address</h6>
                         <div class="checkout-form-control">
-                            <label for="checkout-name">Full name</label>
+                            <label for="name">Full name</label>
                             <div>
                                 <span class="fa fa-user-circle"></span>
-                                <input type="text" id="checkout-name" name="checkout-name" placeholder="Enter you name..." />
+                                <input type="text" id="checkout-name" name="name" placeholder="Enter you name..." onChange={handleChange} value={orderData.name}/>
                             </div>
                         </div>
                         <div class="checkout-form-control">
-                            <label for="checkout-address">Address</label>
+                            <label for="address">Address</label>
                             <div>
                                 <span class="fa fa-home"></span>
-                                <input type="text" name="checkout-address" id="checkout-address" placeholder="Your address..." />
+                                <input type="text" name="address" id="checkout-address" placeholder="Your address..." onChange={handleChange} value={orderData.address}/>
                             </div>
                         </div>
                         <div class="checkout-form-control">
-                            <label for="checkout-city">City</label>
+                            <label for="city">City</label>
                             <div>
                                 <span class="fa fa-building"></span>
-                                <input type="text" name="checkout-city" id="checkout-city" placeholder="Your city..." />
+                                <input type="text" name="city" id="checkout-city" placeholder="Your city..." onChange={handleChange} value={orderData.city}/>
                             </div>
                         </div>
                         <div class="checkout-form-group">
                             <div class="checkout-form-control">
-                                <label for="checkout-country">Country</label>
+                                <label for="country">Country</label>
                                 <div>
                                     <span class="fa fa-globe"></span>
-                                    <input type="text" name="checkout-country" id="checkout-country" placeholder="Your country..." list="country-list" />
+                                    <input type="text" name="country" id="checkout-country" placeholder="Your country..." list="country-list" onChange={handleChange} value={orderData.country}/>
                                     <datalist id="country-list">
                                         <option value="India"></option>
                                         <option value="USA"></option>
@@ -72,10 +265,10 @@ const Checkout = () => {
                                 </div>
                             </div>
                             <div class="checkout-form-control">
-                                <label for="checkout-postal">Postal code</label>
+                                <label for="postal">Postal code</label>
                                 <div>
                                     <span class="fa fa-archive"></span>
-                                    <input type="numeric" name="checkout-postal" id="checkout-postal" placeholder="Your postal code..."/>
+                                    <input type="numeric" name="postal" id="checkout-postal" placeholder="Your postal code..." onChange={handleChange}/>
                                 </div>
                             </div>
                         </div>
@@ -84,7 +277,7 @@ const Checkout = () => {
                             <label for="checkout-checkbox">Save this information for next time</label>
                         </div>
                         <div class="checkout-form-control-btn">
-                            <button>Continue</button>
+                            <button type='submit'>Continue</button>
                         </div>
                     </form>
                 </section>
@@ -95,14 +288,14 @@ const Checkout = () => {
                         <div key={index} class="checkout-lists">
                             
                             <div class="checkout-card d-flex flex-row">
-                                <div class="checkout-card-image"><img src={prod.image} alt="" /></div>
+                                <div class="checkout-card-image"><img src={prod.productImage} alt="" /></div>
                                 <div class="checkout-card-details">
-                                    <div class="checkout-card-name">{prod.name}</div>
-                                    <div class="checkout-card-price">                                {prod.onSale ? (
+                                    <div class="checkout-card-name " style={{textDecoration:'line-through'}}>{prod.productPrice}</div>
+                                    <div class="checkout-card-price">                                {prod.productSale ? (
                                        <>
-                                      <span>{(prod.price - (prod.price * prod.sale / 100))* (prod.quantity).toFixed(2)}</span>
+                                      <span>{(prod.productPrice - (prod.productPrice * prod.productSale / 100))* (prod.quantity).toFixed(2)}</span>
                                       </>
-                                ): prod.price * prod.quantity}
+                                ): prod.productPrice * prod.quantity}
                                 </div>
                                     <div class="checkout-card-wheel">
                                         <button onClick={() => decreament(index)}>-</button>
@@ -117,9 +310,13 @@ const Checkout = () => {
                             <h6>Shipping</h6>
                             <p>free</p>
                         </div>
+                        <form style={{position:"relative"}}>
+                        <input placeholder="Enter your code" className='cuppon-input'  value={couponCode} onChange={(e) => setCouponCode(e.target.value)}/> 
+                        <span className='cuponBtn' onClick={applyCoupon}>k</span>
+                        </form>
                         <div class="checkout-total">
                             <h6>Total</h6>
-                            <p>{calculateProductPrice()}</p>
+                            <p>{finalTotal}</p>
                         </div>
                     </div>
                 </section>

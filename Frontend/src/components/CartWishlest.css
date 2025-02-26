@@ -164,6 +164,13 @@ a{
     background-position-y: center;
 }
 
+.cuponBtn{
+    position: absolute;
+    top: 25%;
+    left: 90%;
+    cursor: pointer;
+}
+
 
 
 

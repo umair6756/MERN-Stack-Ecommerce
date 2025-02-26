@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import './CartWishlest.css'
 import { Link, useParams } from 'react-router-dom'
 import products from '../data/products-data.json'
@@ -13,6 +13,12 @@ const AddToCart = () => {
   const handleRemove = (index) => {
     removeFromCart(index)
   }
+
+
+  
+
+
+  
 
   return (
     <div>
@@ -37,12 +43,12 @@ const AddToCart = () => {
               <div key={index} className="row border-bottom">
                 <div className="row add-to-cart-main align-items-center">
                   <div className="col-2">
-                    <img className="img-fluid" src={item.image} />
+                    <img className="img-fluid" src={item.productImage} />
 
 
                   </div>
                   <div className="col small-screen">
-                    <div className="row text-muted">{item.category}</div>
+                    <div className="row text-muted">{item.productCatogary}</div>
                     <div className="row">{item.name}</div>
                   </div>
                   <div className="col ">
@@ -54,11 +60,11 @@ const AddToCart = () => {
                   </div>
 
                   <div className="col">
-                  {item.onSale ? (
+                  {item.productSale ? (
                                       
-                                      <span>{(item.price - (item.price * item.sale / 100))*(item.quantity).toFixed(2)}</span>
+                                      <span>{(item.productPrice - (item.productPrice * item.productSale / 100))*(item.quantity).toFixed(2)}</span>
                                       
-                                ): item.price * item.quantity}
+                                ): item.productPrice * item.quantity}
 
                   </div>
                   <div className='col'>
@@ -98,7 +104,7 @@ const AddToCart = () => {
 
               
               <p>GIVE CODE</p>
-              <input id="code" placeholder="Enter your code" className='cuppon-input' />
+              <input id="code" placeholder="Enter your code" className='cuppon-input'/>
             </form>
             <div
               className="row"
@@ -164,8 +170,6 @@ export default AddToCart
 // };
 
 // export default AddToCart;
-
-
 
 
 
