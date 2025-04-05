@@ -282,7 +282,7 @@ color:rgb(45, 219, 219) ;
 /* Sidebar Container */
 /* Sidebar Container */
 .blog-sidebar {
-width: 40%;
+width: 30%;
 padding: 20px;
 display: flex;
 flex-direction: column;

@@ -72,7 +72,7 @@ const TopProducts = () => {
                                 <img src={product.productImage} alt={product.productName}></img>
                         </Link>
                             {product.productSale && (
-                                <span className="product-discount-label">{product.productSale}</span>
+                                <span className="product-discount-label">{product.productSale} %</span>
                             )}
 
                             <ul className="product-links">

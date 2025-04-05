@@ -1,6 +1,7 @@
 import React, { createContext, useState } from 'react';
 import { useEffect } from 'react';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export const adminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
@@ -49,9 +50,15 @@ export const AdminProvider = ({ children }) => {
     
 
 
+      const showSuccess = (message) => toast.success(message);
+      const showError = (message) => toast.error(message);
+  
+
     return (
-        <adminContext.Provider value={{ isGridView, isFilterActive, toggleFilterMenu, switchToGridView, switchToListView, toggleTheme }}>
+        <adminContext.Provider value={{ isGridView, isFilterActive, toggleFilterMenu, switchToGridView, switchToListView, toggleTheme, showSuccess, showError }}>
             {children}
+      <ToastContainer position="top-right" autoClose={2000} />
+
         </adminContext.Provider>
     );
 };

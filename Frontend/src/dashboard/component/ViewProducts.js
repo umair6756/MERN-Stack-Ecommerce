@@ -11,6 +11,8 @@ import { Link, useParams } from 'react-router-dom';
 
 const ViewProducts = () => {
 
+  const {showSuccess, showError} = useContext(adminContext)
+
   const { 
     isGridView, 
     isFilterActive, 
@@ -100,12 +102,12 @@ const deleteProduct = async (id) => {
     if (response.ok) {
       // Only update the state if the deletion was successful
       setProducts(products.filter((product) => product._id !== id));
-      alert("Product Deleted Successfully");
+      showSuccess("Product Deleted Successfully");
     } else {
-      alert("Product Not Deleted");
+      showError("Product Not Deleted");
     }
   } catch (error) {
-    alert("Product Not Deleted");
+    showError("Product Not Deleted", error.message);
     console.log(error);
   }
 };

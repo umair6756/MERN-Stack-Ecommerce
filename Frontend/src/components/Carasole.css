@@ -71,7 +71,7 @@ input#img-3:checked ~ .carasole-caption#caption-3 {
 .carousel-item img {
   width: 100%;
   height: 100vh;
-  object-fit: cover;
+  /* object-fit: cover;   */
   /* border-radius: 15px; */
   animation: fade-in 1s ease-in;
   opacity: .9;

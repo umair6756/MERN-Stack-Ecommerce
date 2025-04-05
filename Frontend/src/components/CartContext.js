@@ -60,9 +60,7 @@ export const CartProvider = ({children}) => {
     const addToWish = (product) =>{
       setWishlest((prevWish) => [...prevWish, product]);
       toast.success("Product added successfully 🧡 ", {
-        position: "top-right",
-        autoClose: 3000,  
-        theme: "light",  
+
           
          
       });
@@ -75,9 +73,7 @@ export const CartProvider = ({children}) => {
         
         return prevCart.filter((item, position) => position !== index)}) 
       toast.error('Product Remove from Cart 🤬 ',{
-       autoClose: 2000,
-       position :"top-right",
-       theme: "dard",
+
       });
     }
 
@@ -85,9 +81,7 @@ export const CartProvider = ({children}) => {
       setWishlest((prevWish) => {
         return prevWish.filter((item, prod) => prod !== index)})
       toast.error('Product Remove from Wishlest 🤬 ',{
-       autoClose: 2000,
-       position :"top-right",
-       theme: "dark",
+
       });
     }
 
@@ -165,14 +159,18 @@ export const CartProvider = ({children}) => {
  
 
 
+    const showSuccess = (message) => toast.success(message);
+    const showError = (message) => toast.error(message);
+
 
 
     
 
   return (
-    <CartContext.Provider value={{searchTerm,setSearchTerm,cart,setCart, wishlest,addToCart, removeFromCart,addToWish,removeFromWishlest, calculateProductPrice,increament,decreament,count,setCount,useScrollAnimation}}>
+    <CartContext.Provider value={{searchTerm,setSearchTerm,cart,setCart, wishlest,addToCart, removeFromCart,addToWish,removeFromWishlest, calculateProductPrice,increament,decreament,count,setCount,useScrollAnimation,showSuccess, showError}}>
         {children}
-        <ToastContainer />
+        
+        <ToastContainer position="top-right" autoClose={2000} />
     </CartContext.Provider>
   );
 };

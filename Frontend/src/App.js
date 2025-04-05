@@ -58,6 +58,7 @@ import NewChart from "./dashboard/component/Chart";
 import AreaChart from "./dashboard/component/Chart";
 import UserReviews from "./dashboard/component/UserReviews";
 import Cupon from "./dashboard/component/Cupon";
+import Message from "./dashboard/component/Message";
 
 
 
@@ -97,7 +98,7 @@ function App() {
          <CartProvider>
          <AdminProvider>
           <Routes>
-            <Route path="/" element={<Home/>} ></Route>
+          <Route path="/" element={<Home/>} ></Route>
             <Route path="/about" element={<About/>} ></Route>
             <Route path="/contact" element={<Contact/>} ></Route>
             <Route path="/Faq" element={<FAQ/>}></Route>
@@ -117,7 +118,7 @@ function App() {
             <Route path="/form" element={<BlogPostForm/>}></Route>
             <Route path="/blogpage" element={<AdminBlogPage/>}></Route>
             {/* <Route path="/productform" element={<ProductForm/>}></Route> */}
-            <Route path="/invoice" element={<Invoice/>}></Route>
+            <Route path="/order/:invoiceNumber" element={<Invoice/>}></Route>
             <Route path="/orderpage" element={<AdminOrdersPage/>}></Route>
             <Route path="/productform" element={<AddProductPage/>}></Route>
             <Route path="/blogform" element={<AddBlog/>}></Route>
@@ -125,6 +126,8 @@ function App() {
             {/* <Route path="/chart" element={<AreaChart/>}></Route> */}
             <Route path="/reviews" element={<UserReviews/>}></Route>
             <Route path="/cupons" element={<Cupon/>}></Route>
+            <Route path="/message" element={<Message/>}></Route>
+
           
 
 

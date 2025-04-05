@@ -1,6 +1,8 @@
 import React from 'react'
 import './Footer.css'
 
+import logo from '../banners-image/logo.png'
+
 const Footer = () => {
     return (
         <div>
@@ -41,7 +43,7 @@ const Footer = () => {
                         <div className="row">
                             <div className="col-xl-4 col-lg-4 mb-50">
                                 <div className="footer-widget">
-                                    <div className="footer-logo">
+                                    <div className="footer-logo my-0 py-0">
                                         <a href="index.html">
                                             {/* <img
                                                 src="https://i.ibb.co/QDy827D/ak-logo.png"
@@ -49,16 +51,16 @@ const Footer = () => {
                                                 alt="logo"
                                             /> */}
 
-                                            <h1 className='logo'>Umair</h1>
+                                            <h1 className='logo'><img src={logo}/></h1>
                                         </a>
                                     </div>
-                                    <div className="footer-text">
+                                    {/* <div className="footer-text">
                                         <p>
                                             Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed
                                             do eiusmod tempor incididuntut consec tetur adipisicing
                                             elit,Lorem ipsum dolor sit amet.
                                         </p>
-                                    </div>
+                                    </div> */}
                                     <div className="footer-social-icon">
                                         <span>Follow us</span>
                                         <a href="#">

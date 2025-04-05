@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./Sidebar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAlignCenter, faAlignLeft, faAlignRight, faDeleteLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
+import { adminContext } from "./adminContext";
 const BlogPostForm = () => {
+
+  const{ showSuccess, showError} = useContext(adminContext)
   // const [blogData, setBlogData] = useState({
   //   title: "",
   //   author: "",
@@ -90,9 +93,9 @@ const BlogPostForm = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert("Blog Added Successfully");
+          showSuccess("Blog Added Successfully");
         } else {
-          alert("Blog Added Successfully");
+          showError("Blog not added Successfully");
         }
       })
       .catch((error) => {

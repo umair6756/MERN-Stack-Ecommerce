@@ -8,6 +8,9 @@ import { faArrowRightArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Checkout = () => {
 
+    const {showSuccess , showError} = useContext(CartContext)
+    
+
     // const [ordersData, setOrdersData] = useState({
     //     custEmail: "",
     //     custPhone: "",
@@ -135,13 +138,13 @@ console.log(orderData)
     
             const data = await response.json();
             if (data.success) {
-                alert("Order placed successfully!");
+                showSuccess("Order placed successfully!");
             } else {
-                alert("Failed to place order.");
+                showError("Failed to place order.");
             }
         } catch (error) {
             console.error("Error placing order:", error);
-            alert("Something went wrong.");
+            showError("Something went wrong.");
         }
     };
 
@@ -216,14 +219,14 @@ console.log(orderData)
                             <label for="email">E-mail</label>
                             <div >
                                 <span class="fa fa-envelope"></span>
-                                <input type="email" id="checkout-email" name="email" placeholder="Enter your email..." onChange={handleChange} value={orderData.email}/>
+                                <input type="email" id="checkout-email" name="email" placeholder="Enter your email..." onChange={handleChange} value={orderData.email} required="true"/>
                             </div>
                         </div>
                         <div class="checkout-form-control">
                             <label for="phone">Phone</label>
                             <div>
                                 <span class="fa fa-phone"></span>
-                                <input type="tel" name="phone" id="checkout-phone" placeholder="Enter you phone..." onChange={handleChange} value={orderData.phone}/>
+                                <input type="tel" name="phone" id="checkout-phone" placeholder="Enter you phone..." onChange={handleChange} value={orderData.phone} required="true"/>
                             </div>
                         </div>
                         <br></br>
@@ -232,21 +235,21 @@ console.log(orderData)
                             <label for="name">Full name</label>
                             <div>
                                 <span class="fa fa-user-circle"></span>
-                                <input type="text" id="checkout-name" name="name" placeholder="Enter you name..." onChange={handleChange} value={orderData.name}/>
+                                <input type="text" id="checkout-name" name="name" placeholder="Enter you name..." onChange={handleChange} value={orderData.name} required="true"/>
                             </div>
                         </div>
                         <div class="checkout-form-control">
                             <label for="address">Address</label>
                             <div>
                                 <span class="fa fa-home"></span>
-                                <input type="text" name="address" id="checkout-address" placeholder="Your address..." onChange={handleChange} value={orderData.address}/>
+                                <input type="text" name="address" id="checkout-address" placeholder="Your address..." onChange={handleChange} value={orderData.address} required="true"/>
                             </div>
                         </div>
                         <div class="checkout-form-control">
                             <label for="city">City</label>
                             <div>
                                 <span class="fa fa-building"></span>
-                                <input type="text" name="city" id="checkout-city" placeholder="Your city..." onChange={handleChange} value={orderData.city}/>
+                                <input type="text" name="city" id="checkout-city" placeholder="Your city..." onChange={handleChange} value={orderData.city} required="true"/>
                             </div>
                         </div>
                         <div class="checkout-form-group">
@@ -254,7 +257,7 @@ console.log(orderData)
                                 <label for="country">Country</label>
                                 <div>
                                     <span class="fa fa-globe"></span>
-                                    <input type="text" name="country" id="checkout-country" placeholder="Your country..." list="country-list" onChange={handleChange} value={orderData.country}/>
+                                    <input type="text" name="country" id="checkout-country" placeholder="Your country..." list="country-list" onChange={handleChange} value={orderData.country} required="true"/>
                                     <datalist id="country-list">
                                         <option value="India"></option>
                                         <option value="USA"></option>

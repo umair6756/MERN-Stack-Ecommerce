@@ -11,6 +11,7 @@ import moment from 'moment/moment';
 
 const ViewBlog = () => {
 
+  const {showSuccess, shwoError} = useContext(adminContext)
 
   const [blogs, setblogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,12 +82,12 @@ const ViewBlog = () => {
       if (response.ok) {
         // Only update the state if the deletion was successful
         setblogs(blogs.filter((blogs) => blogs._id !== id));
-        alert("Blog Deleted Successfully");
+        showSuccess("Blog Deleted Successfully");
       } else {
-        alert("Blog Not Deleted");
+        shwoError("Blog Not Deleted");
       }
     } catch (error) {
-      alert("Blog Not Deleted");
+      shwoError("Blog Not Deleted", error.message);
       console.log(error);
     }
   };

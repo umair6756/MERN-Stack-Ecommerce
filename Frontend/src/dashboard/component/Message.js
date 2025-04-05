@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from './Sidebar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
+import { adminContext } from './adminContext';
 const Message = () => {
+
+  const{showSuccess, showError} = useContext(adminContext)
+
   const [isReplying, setIsReplying] = useState(false);
   const [replies, setReplies] = useState([]);
   const [replyText, setReplyText] = useState("");
@@ -43,9 +47,9 @@ const Message = () => {
           adminEmail: 'muhammadumair23568@gmail.com',  // You can use the admin's email
         }),
       });
-      console.log('Reply sent and email notified!');
+      showSuccess('Reply sent successfully');
     } catch (error) {
-      console.error('Error sending reply:', error);
+      showError('Error sending reply:', error);
     }
   };
 
@@ -72,12 +76,12 @@ const deleteMessage = async (id) => {
 
       if (response.ok) {
           setMessages(messages.filter((message) => message._id !== id));
-          alert("Message Deleted Successfully");
+          showSuccess("Message Deleted Successfully");
       } else {
-          alert("Message Not Deleted: " + data.message);
+          showError("Message Not Deleted: " + data.message);
       }
   } catch (error) {
-      alert("Message Not Deleted: " + error.message);
+      showError("Message Not Deleted: " + error.message);
       console.error("Error:", error);
   }
 };
@@ -95,7 +99,7 @@ const deleteMessage = async (id) => {
             <p className='' style={{marginTop:".3rem"}}>{message.email}</p>
             </div>
             <div>
-            <FontAwesomeIcon icon={faTrash}  onClick={() => deleteMessage(message._id)}/>
+            <FontAwesomeIcon icon={faTrash} onClick={() => deleteMessage(message._id)} style={{cursor:'pointer'}}/>
             </div>         
           </div>
           <div className="message-body">

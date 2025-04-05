@@ -3,13 +3,16 @@
 
 
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./ViewProducts.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "./Sidebar";
+import { adminContext } from "./adminContext";
 
 const ProductForm = () => {
+
+  const {showSuccess, showError} = useContext(adminContext)
   const [product, setProduct] = useState({
     productName: "",
     productCatogary: "",
@@ -94,9 +97,9 @@ const handleSubmit = (e) => {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        alert("Product Added Successfully");
+        showSuccess("Product Added Successfully");
       } else {
-        alert("Product Added Successfully");
+        showError("Product not added Successfully");
       }
     })
     .catch((error) => {
@@ -143,23 +146,23 @@ const handleSubmit = (e) => {
             <div className="border-span px-0 mx-0 w-100"></div>
             <div className="form-group">
               <label>Product Name</label>
-              <input type="text" name="productName" placeholder="Enter product name" onChange={handleChange} value={product.productName} />
+              <input type="text" name="productName" placeholder="Enter product name" onChange={handleChange} value={product.productName} required />
             </div>
             <div className="form-group">
               <label>Category</label>
-              <input type="text" name="productCatogary" placeholder="Enter category" onChange={handleChange} value={product.productCatogary} />
+              <input type="text" name="productCatogary" placeholder="Enter category" onChange={handleChange} value={product.productCatogary} required/>
             </div>
             <div className="form-group">
               <label>Brand</label>
-              <input type="text" name="productBrand" placeholder="Enter brand" onChange={handleChange} value={product.productBrand} />
+              <input type="text" name="productBrand" placeholder="Enter brand" onChange={handleChange} value={product.productBrand} required />
             </div>
             <div className="form-group">
               <label>Stock Quantity</label>
-              <input type="number" name="productStock" placeholder="Enter stock quantity" onChange={handleChange} value={product.productStock} />
+              <input type="number" name="productStock" placeholder="Enter stock quantity" onChange={handleChange} value={product.productStock} required/>
             </div>
             <div className="form-group">
               <label>Description</label>
-              <textarea name="description" rows="3" placeholder="Enter description" onChange={handleChange} value={product.description}></textarea>
+              <textarea name="description" rows="3" placeholder="Enter description" onChange={handleChange} value={product.description} required></textarea>
             </div>
           </div>
 
@@ -194,7 +197,7 @@ const handleSubmit = (e) => {
 
             <div className="form-group">
               <label>Price (₹)</label>
-              <input type="number" name="productPrice" placeholder="Enter price" onChange={handleChange} value={product.productPrice} />
+              <input type="number" name="productPrice" placeholder="Enter price" onChange={handleChange} value={product.productPrice} required/>
             </div>
             <div className="form-group">
               <label>Discount (%)</label>

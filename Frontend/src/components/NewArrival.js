@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import './Buttons.css'; // Import your CSS for advanced styles
-import image from '../banners-image/banner2.jpg'
+import image from '../banners-image/new-arrival.png'
+import Buttons from './Buttons';
 
 const NewArrival = () => {
   const [timeLeft, setTimeLeft] = useState(3600); // Countdown starting from 1 hour (3600 seconds)
@@ -45,7 +46,7 @@ const NewArrival = () => {
           <h1 className="banner-title"> Limited-Time Offer!</h1>
           <h1 className='text-center my-3 fw-bolder' style={{color:'#f0f0f0', fontFamily:'cursive'}}>  25% OFF</h1>
        <p className="banner-description">
-         <span className="apply-coupon mx-3 text-center" style={{color:'#C19A6B'}}>SAVE50</span>
+         <span className="apply-coupon mx-3 text-center" style={{color:'black'}}>SAVE50</span>
         </p>
             <div className="countdown-boxes">
               <div className="countdown-box">
@@ -61,9 +62,11 @@ const NewArrival = () => {
                 <div className="time-label">Seconds</div>
               </div>
             </div>
-            <Button variant="primary" className="banner-button">
+            {/* <Button variant="primary" className="banner-button">
               Shop Now
-            </Button>
+            </Button> */}
+
+            {/* <Buttons/> */}
           </Col>
           {/* <Col lg={6} md={12} className="text-center">
             <img

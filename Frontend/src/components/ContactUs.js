@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './ContactUs.css'; // Import the CSS for styling
 import contactImage from '../banners-image/hero/contact-img.jpg'
 import { HeroSection } from './Buttons';
+import { CartContext } from './CartContext';
 
 function ContactUs() {
+
+    const {showSuccess , showError} = useContext(CartContext)
 
     const [contactData, setContactData] = useState({
         userName: "",
@@ -38,9 +41,9 @@ function ContactUs() {
             console.log("Response Data:", data); // Debugging: Check response data
     
             if (data.success) {
-                alert("Message sent successfully!");
+                showSuccess("Message sent successfully!");
             } else {
-                alert(`Failed to sent message: ${data.message}`);
+                showError(`Failed to sent message: ${data.message}`);
             }
         } catch (error) {
             console.error("Error Sending Message:", error);
@@ -69,17 +72,17 @@ function ContactUs() {
                         <h2>Get In Touch</h2>
                         <form onSubmit={handleMessageSubmit}>
                             <label htmlFor="name">Your Name</label>
-                            <input type="text" id="name" placeholder="Enter your name" value={contactData.userName} onChange={handleInputChange} name='userName'/>
+                            <input type="text" id="name" placeholder="Enter your name" value={contactData.userName} onChange={handleInputChange} name='userName' required="true"/>
 
                             
 
                             <label htmlFor="phone">Your Phone</label>
                             
-                            <input type="number" id="phone" placeholder="Enter your name" />
+                            <input type="text" id="phone" placeholder="Enter your name" />
                             
                             <label htmlFor="email">Your Email</label>
                             
-                            <input type="email" id="email" placeholder="Enter your email" value={contactData.email} onChange={handleInputChange} name='email'/>
+                            <input type="email" id="email" placeholder="Enter your email" value={contactData.email} onChange={handleInputChange} name='email' required="true"/>
                             
                             
  
@@ -91,6 +94,7 @@ function ContactUs() {
                                 value={contactData.message}
                                 onChange={handleInputChange}
                                 name='message'
+                                required="true"
                             ></textarea>
 
                             <button type="submit">Send Message</button>

@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faCartShopping, faChevronDown, faHeart, faSearch, faTimes, faUser } from '@fortawesome/free-solid-svg-icons'; 
 import { CartContext } from './CartContext';
 
+import logo from '../banners-image/logo.png'
+
 const Navbar = () => {
   // const [isMenuOpen, setIsMenuOpen] = useState(false); // Manage the state of the menu
   const [isSearch, setIsSearch] = useState(false);
@@ -125,7 +127,7 @@ const Navbar = () => {
       </label>
       <div className="content">
         <div className="logo">
-          <a href="#">Logo</a>
+          <a href="#"><img className='w-25' src={logo}/></a>
         </div>
         <div className=''>
         <ul className="links">

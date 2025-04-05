@@ -8,11 +8,12 @@ import moment from 'moment'
 
 export const ReviewsForm = ({ isFormVisible, toggleForm, addReview   }) => {
   const [reviews, setReviews] = useState(reviewsData)
+  const {showSuccess, showError} = useContext(CartContext)
   // const [isFormVisible, setIsFormVisible] = useState(false);
 const {id} = useParams()
 
 
-  console.log("Id is ff", id)
+
 
 
   const [imagePreview, setImagePreview] = useState(null);
@@ -68,8 +69,6 @@ const {id} = useParams()
         return;
     }
 
-    console.log("Product ID:", id); // Debugging: Check if ID is correct
-    console.log("Form Data:", formData); // Debugging: Check form data
 
     try {
         const response = await fetch(`http://localhost:5000/product/${id}/review`, {
@@ -92,14 +91,14 @@ const {id} = useParams()
         console.log("Response Data:", data); // Debugging: Check response data
 
         if (data.success) {
-            alert("Review added successfully!");
+            showSuccess("Review added successfully!");
             toggleForm(); // Close the form after successful submission
         } else {
-            alert(`Failed to add review: ${data.message}`);
+            showError(`Failed to add review: ${data.message}`);
         }
     } catch (error) {
         console.error("Error Adding Review:", error);
-        alert(`Something went wrong. Please try again: ${error.message}`);
+        showError(`Something went wrong. Please try again: ${error.message}`);
     }
 };
 
